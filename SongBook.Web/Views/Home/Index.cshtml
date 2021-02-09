@@ -8,25 +8,36 @@
     <h1 class="display-4">@Model.Song.Name</h1>
     <h3 class="display-4">@Model.Song.Author</h3>
     <table>
-        <tr>
-            <td>
-                @foreach (string line in Model.FirstBarChordsLines)
-                {
-                    @line<br />
-                }
-            </td>
-            <td>
-                @foreach (string line in Model.SecondBarChordsLines)
-                {
-                    @line<br />
-                }
-            </td>
-            <td>
-                @foreach (string line in Model.TextLines)
-                {
-                    @line<br />
-                }
-            </td>
-        </tr>
+        @for (int i = 0; i < Model.Parts.Count; ++i)
+        {
+            PartViewModel part = Model.Parts[i];
+            <tr>
+                <td valign="top">@part.Part.Name</td>
+                <td>
+                    @if (Model.Parts.Take(i).All(p => p.Part.Name != part.Part.Name))
+                    {
+                        foreach (string line in part.FirstBarChordsLines)
+                        {
+                            @line<br/>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (Model.Parts.Take(i).All(p => p.Part.Name != part.Part.Name))
+                    {
+                        foreach (string line in part.SecondBarChordsLines)
+                        {
+                            @line<br/>
+                        }
+                    }
+                </td>
+                <td>
+                    @foreach (string line in part.TextLines)
+                    {
+                        @line<br/>
+                    }
+                </td>
+            </tr>
+        }
     </table>
 </div>
