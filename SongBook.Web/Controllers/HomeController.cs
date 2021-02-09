@@ -9,7 +9,7 @@ namespace SongBook.Web.Controllers
     {
         [HttpGet]
         [Route("")]
-        public IActionResult Index([FromServices]Manager manager) => View(manager.Songs);
+        public IActionResult Index([FromServices]Manager manager) => View(new SongViewModel(manager.Songs[0]));
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

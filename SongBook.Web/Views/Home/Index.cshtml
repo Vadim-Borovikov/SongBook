@@ -1,16 +1,31 @@
-﻿@model IList<Song>
+﻿@model SongViewModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    @foreach (Song song in Model)
-    {
-        <h1 class="display-4">@song.Author — @song.Name</h1>
-        foreach (HalfBarData halfBar in song.HalfBars)
-        {
-            <p>@halfBar.Chord @halfBar.Text</p>
-        }
-    }
+    <h1 class="display-4">@Model.Song.Author — @Model.Song.Name</h1>
+    <table>
+        <tr>
+            <td>
+                @foreach (string line in Model.FirstBarChordsLines)
+                {
+                    @line<br />
+                }
+            </td>
+            <td>
+                @foreach (string line in Model.SecondBarChordsLines)
+                {
+                    @line<br />
+                }
+            </td>
+            <td>
+                @foreach (string line in Model.TextLines)
+                {
+                    @line<br />
+                }
+            </td>
+        </tr>
+    </table>
 </div>
