@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SongBook.Web.Models;
 
 namespace SongBook.Web
 {
@@ -11,7 +12,13 @@ namespace SongBook.Web
         public Startup(IConfiguration config) => _config = config;
 
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public void ConfigureServices(IServiceCollection services) => services.AddMvc();
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<Manager>();
+            services.Configure<Config>(_config);
+
+            services.AddMvc();
+        }
 
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
