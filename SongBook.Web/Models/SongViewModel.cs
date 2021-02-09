@@ -23,9 +23,18 @@ namespace SongBook.Web.Models
                 SecondBarChordsLines.Add(GetChordsLine(chords.Skip(2).ToList()));
 
                 string words = line.Select(l => l.Text).Join("");
+                string previous = TextLines.LastOrDefault();
                 if (words.Length > 0)
                 {
-                    words = char.ToUpper(words[0]) + words.Substring(1);
+                    if (!string.IsNullOrWhiteSpace(previous) && !previous.EndsWith(' '))
+                    {
+                        TextLines[TextLines.Count - 1] = $"{previous}-";
+                        words = $"-{words}";
+                    }
+                    else
+                    {
+                        words = char.ToUpper(words[0]) + words.Substring(1);
+                    }
                 }
                 TextLines.Add(words);
             }
