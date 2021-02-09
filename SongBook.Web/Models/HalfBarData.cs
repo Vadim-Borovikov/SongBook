@@ -3,7 +3,7 @@ using GoogleSheetsManager;
 
 namespace SongBook.Web.Models
 {
-    public sealed class HalfBarData : ILoadable
+    internal sealed class HalfBarData : ILoadable
     {
         public string Chord { get; private set; }
         public string Text { get; private set; }
