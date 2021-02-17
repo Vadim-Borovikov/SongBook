@@ -1,62 +1,8 @@
-﻿@model SongViewModel
+﻿@model IList<Song>
 
-@{
-    ViewData["Title"] = "Home Page";
-
-    Func<Chord, object> renderChord = @<a title="@item.Fingering">@item.ToString()</a>;
-
-    Func<IList<Chord>, object> renderChords =
-        @<text>
-            @if (item.Count == 1)
-            {
-                @renderChord(item[0])
-            }
-            else
-            {
-                @renderChord(item[0])@:-@renderChord(item[1])
-            }
-            <br />
-        </text>;
-
-    Func<IList<IList<Chord>>, object> renderChordsLine =
-        @<text>
-            @foreach (IList<Chord> chords in item)
-            {
-                @renderChords(chords)
-            }
-        </text>;
-
-    Func<PartViewModel, object> renderPart =
-        @<tr>
-            <td valign="top">@item.Part.Name</td>
-            <td>
-                @if (!item.IsRepeat)
-                {
-                    @renderChordsLine(item.FirstBarChords)
-                }
-            </td>
-            <td>
-                @if (!item.IsRepeat)
-                {
-                    @renderChordsLine(item.SecondBarChords)
-                }
-            </td>
-            <td>
-                @foreach (string line in item.TextLines)
-                {
-                    @line<br />
-                }
-            </td>
-        </tr>;
-
-    <div class="text-center">
-        <h1 class="display-4">@Model.Song.Name</h1>
-        <h3 class="display-4">@Model.Song.Author</h3>
-        <table>
-            @foreach (PartViewModel part in Model.Parts)
-            {
-                @renderPart(part)
-            }
-        </table>
-    </div>
+@for (int i = 0; i < Model.Count; ++i)
+{
+    Song song = Model[i];
+    <a href="/@i">@song.Author — @song.Name</a>
+    <br />
 }

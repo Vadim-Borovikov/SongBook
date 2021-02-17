@@ -9,7 +9,22 @@ namespace SongBook.Web.Controllers
     {
         [HttpGet]
         [Route("")]
-        public IActionResult Index([FromServices]Manager manager) => View(new SongViewModel(manager.Songs[0]));
+        public IActionResult Index([FromServices]Manager manager)
+        {
+            if (manager.Songs.Count == 1)
+            {
+                return Redirect("0");
+            }
+            return View(manager.Songs);
+        }
+
+        [Route("{id}")]
+        public IActionResult SongView(int id, [FromServices]Manager manager)
+        {
+            Song song = manager.Songs[id];
+            var songViewModel = new SongViewModel(song);
+            return View(songViewModel);
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
