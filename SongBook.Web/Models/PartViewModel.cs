@@ -6,9 +6,10 @@ namespace SongBook.Web.Models
 {
     public sealed class PartViewModel
     {
-        internal PartViewModel(Part part)
+        internal PartViewModel(Part part, bool isRepeat)
         {
             Part = part;
+            IsRepeat = isRepeat;
 
             FirstBarChords = new List<IList<Chord>>();
             SecondBarChords = new List<IList<Chord>>();
@@ -54,6 +55,7 @@ namespace SongBook.Web.Models
         public readonly IList<IList<Chord>> FirstBarChords;
         public readonly IList<IList<Chord>> SecondBarChords;
         public readonly IList<string> TextLines;
+        public readonly bool IsRepeat;
 
         private const int LineSize = 4;
     }

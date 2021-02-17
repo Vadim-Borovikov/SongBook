@@ -8,10 +8,17 @@ namespace SongBook.Web.Models
         public SongViewModel(Song song)
         {
             Song = song;
-            Parts = Song.Parts.Select(p => new PartViewModel(p)).ToList();
+            Parts = new List<PartViewModel>(Song.Parts.Count);
+            for (int i = 0; i < Song.Parts.Count; ++i)
+            {
+                Part part = Song.Parts[i];
+                bool isRepeat = Song.Parts.Take(i).Any(p => p.Name == part.Name);
+                var viewModel = new PartViewModel(part, isRepeat);
+                Parts.Add(viewModel);
+            }
         }
 
         public readonly Song Song;
-        public readonly IReadOnlyList<PartViewModel> Parts;
+        public readonly List<PartViewModel> Parts;
     }
 }

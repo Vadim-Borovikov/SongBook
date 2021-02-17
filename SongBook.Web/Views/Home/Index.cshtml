@@ -2,58 +2,61 @@
 
 @{
     ViewData["Title"] = "Home Page";
-}
 
-<div class="text-center">
-    <h1 class="display-4">@Model.Song.Name</h1>
-    <h3 class="display-4">@Model.Song.Author</h3>
-    <table>
-        @for (int i = 0; i < Model.Parts.Count; ++i)
-        {
-            PartViewModel part = Model.Parts[i];
-            <tr>
-                <td valign="top">@part.Part.Name</td>
-                <td>
-                    @if (Model.Parts.Take(i).All(p => p.Part.Name != part.Part.Name))
-                    {
-                        foreach (IList<Chord> chords in part.FirstBarChords)
-                        {
-                            if (chords.Count == 1)
-                            {
-                                <a title="@chords[0].Fingering">@chords[0].ToString()</a>
-                            }
-                            else
-                            {
-                                <a title="@chords[0].Fingering">@chords[0].ToString()</a><text>-</text><a title="@chords[1].Fingering">@chords[1].ToString()</a>
-                            }
-                            <br />
-                        }
-                    }
-                </td>
-                <td>
-                    @if (Model.Parts.Take(i).All(p => p.Part.Name != part.Part.Name))
-                    {
-                        foreach (IList<Chord> chords in part.SecondBarChords)
-                        {
-                            if (chords.Count == 1)
-                            {
-                                <a title="@chords[0].Fingering">@chords[0].ToString()</a>
-                            }
-                            else
-                            {
-                                <a title="@chords[0].Fingering">@chords[0].ToString()</a><text>-</text><a title="@chords[1].Fingering">@chords[1].ToString()</a>
-                            }
-                            <br />
-                        }
-                    }
-                </td>
-                <td>
-                    @foreach (string line in part.TextLines)
-                    {
-                        @line<br/>
-                    }
-                </td>
-            </tr>
-        }
-    </table>
-</div>
+    Func<Chord, object> renderChord = @<a title="@item.Fingering">@item.ToString()</a>;
+
+    Func<IList<Chord>, object> renderChords =
+        @<text>
+            @if (item.Count == 1)
+            {
+                @renderChord(item[0])
+            }
+            else
+            {
+                @renderChord(item[0])@:-@renderChord(item[1])
+            }
+            <br />
+        </text>;
+
+    Func<IList<IList<Chord>>, object> renderChordsLine =
+        @<text>
+            @foreach (IList<Chord> chords in item)
+            {
+                @renderChords(chords)
+            }
+        </text>;
+
+    Func<PartViewModel, object> renderPart =
+        @<tr>
+            <td valign="top">@item.Part.Name</td>
+            <td>
+                @if (!item.IsRepeat)
+                {
+                    @renderChordsLine(item.FirstBarChords)
+                }
+            </td>
+            <td>
+                @if (!item.IsRepeat)
+                {
+                    @renderChordsLine(item.SecondBarChords)
+                }
+            </td>
+            <td>
+                @foreach (string line in item.TextLines)
+                {
+                    @line<br />
+                }
+            </td>
+        </tr>;
+
+    <div class="text-center">
+        <h1 class="display-4">@Model.Song.Name</h1>
+        <h3 class="display-4">@Model.Song.Author</h3>
+        <table>
+            @foreach (PartViewModel part in Model.Parts)
+            {
+                @renderPart(part)
+            }
+        </table>
+    </div>
+}
