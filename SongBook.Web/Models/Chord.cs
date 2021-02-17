@@ -4,7 +4,7 @@ namespace SongBook.Web.Models
 {
     public sealed class Chord
     {
-        private static readonly string[] Notes =
+        private static readonly string[] Semitones =
         {
             "A",
             "A#",
@@ -22,29 +22,29 @@ namespace SongBook.Web.Models
 
         public readonly string Fingering;
 
-        private readonly byte _note;
+        private readonly byte _semitone;
         private readonly string _postfix;
         private readonly bool _isSimple;
 
-        private Chord(byte note, string postfix, string fingering, bool isSimple)
+        private Chord(byte semitone, string postfix, string fingering, bool isSimple)
         {
-            _note = note;
+            _semitone = semitone;
             _postfix = postfix;
             Fingering = fingering;
             _isSimple = isSimple;
         }
 
         internal Chord(ChordData data)
-            : this((byte)Notes.IndexOf(data.Note), data.Postfix, data.Fingering, data.IsSimple)
+            : this((byte)Semitones.IndexOf(data.Semitone), data.Postfix, data.Fingering, data.IsSimple)
         {
         }
 
-        public Chord Transpose(int tones)
+        public Chord Transpose(int semitones)
         {
-            byte note = (byte)((_note + tones) % Notes.Length);
-            return new Chord(note, _postfix, Fingering, _isSimple);
+            byte semitone = (byte)((_semitone + semitones) % Semitones.Length);
+            return new Chord(semitone, _postfix, Fingering, _isSimple);
         }
 
-        public override string ToString() => $"{Notes[_note]}{_postfix}";
+        public override string ToString() => $"{Semitones[_semitone]}{_postfix}";
     }
 }
