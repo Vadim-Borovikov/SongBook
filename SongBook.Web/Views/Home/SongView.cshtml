@@ -52,11 +52,11 @@
     <div class="text-center">
         <h1 class="display-4">@Model.Song.Name</h1>
         <h3 class="display-4">@Model.Song.Author</h3>
-        <table>
-            @foreach (PartViewModel part in Model.Parts)
-            {
-                @renderPart(part)
-            }
-        </table>
     </div>
+    <table>
+        @foreach (PartViewModel part in Model.Parts)
+        {
+            @renderPart(part)
+        }
+    </table>
 }
