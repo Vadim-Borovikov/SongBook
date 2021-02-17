@@ -8,7 +8,8 @@ namespace SongBook.Web.Models
     {
         internal readonly IReadOnlyList<Part> Parts;
 
-        internal Song(string name, string author, Provider provider, string sheetPostfix)
+        internal Song(string name, string author, Provider provider, string sheetPostfix,
+            Dictionary<string, Chord> chords)
         {
             Name = name;
             Author = author;
@@ -18,6 +19,7 @@ namespace SongBook.Web.Models
             Part currentPart = null;
             foreach (HalfBarData halfBar in halfBars)
             {
+                halfBar.SetChord(chords);
                 if (string.IsNullOrWhiteSpace(halfBar.Part))
                 {
                     if (currentPart == null)

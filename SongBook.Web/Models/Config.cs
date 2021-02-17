@@ -15,6 +15,9 @@ namespace SongBook.Web.Models
         public string GoogleRangeIndex { get; set; }
 
         [JsonProperty]
+        public string GoogleRangeChords { get; set; }
+
+        [JsonProperty]
         public string GoogleRangePostfix { get; set; }
 
         [JsonProperty]

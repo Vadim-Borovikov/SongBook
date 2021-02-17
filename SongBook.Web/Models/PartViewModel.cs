@@ -10,17 +10,17 @@ namespace SongBook.Web.Models
         {
             Part = part;
 
-            FirstBarChordsLines = new List<string>();
-            SecondBarChordsLines = new List<string>();
+            FirstBarChords = new List<IList<Chord>>();
+            SecondBarChords = new List<IList<Chord>>();
             TextLines = new List<string>();
 
             for (int i = 0; i < Part.HalfBars.Count; i += LineSize)
             {
                 List<HalfBarData> line = Part.HalfBars.Skip(i).Take(LineSize).ToList();
 
-                List<string> chords = line.Select(l => l.Chord).ToList();
-                FirstBarChordsLines.Add(GetChordsLine(chords.Take(2).ToList()));
-                SecondBarChordsLines.Add(GetChordsLine(chords.Skip(2).ToList()));
+                List<Chord> chords = line.Select(l => l.Chord).ToList();
+                FirstBarChords.Add(GetChords(chords.Take(2).ToList()));
+                SecondBarChords.Add(GetChords(chords.Skip(2).ToList()));
 
                 string words = line.Select(l => l.Text).Join("");
                 string previous = TextLines.LastOrDefault();
@@ -40,19 +40,19 @@ namespace SongBook.Web.Models
             }
         }
 
-        private static string GetChordsLine(IReadOnlyList<string> chords)
+        private static IList<Chord> GetChords(IList<Chord> chords)
         {
-            if (chords.Count != 2)
+            if ((chords.Count == 2) && (chords[0] == chords[1]))
             {
-                return chords.Join("?");
+                return new[] { chords[0] };
             }
 
-            return chords[0] == chords[1] ? chords[0] : $"{chords[0]}-{chords[1]}";
+            return chords;
         }
 
         public readonly Part Part;
-        public readonly IList<string> FirstBarChordsLines;
-        public readonly IList<string> SecondBarChordsLines;
+        public readonly IList<IList<Chord>> FirstBarChords;
+        public readonly IList<IList<Chord>> SecondBarChords;
         public readonly IList<string> TextLines;
 
         private const int LineSize = 4;

@@ -16,18 +16,34 @@
                 <td>
                     @if (Model.Parts.Take(i).All(p => p.Part.Name != part.Part.Name))
                     {
-                        foreach (string line in part.FirstBarChordsLines)
+                        foreach (IList<Chord> chords in part.FirstBarChords)
                         {
-                            @line<br/>
+                            if (chords.Count == 1)
+                            {
+                                <a title="@chords[0].Fingering">@chords[0].ToString()</a>
+                            }
+                            else
+                            {
+                                <a title="@chords[0].Fingering">@chords[0].ToString()</a><text>-</text><a title="@chords[1].Fingering">@chords[1].ToString()</a>
+                            }
+                            <br />
                         }
                     }
                 </td>
                 <td>
                     @if (Model.Parts.Take(i).All(p => p.Part.Name != part.Part.Name))
                     {
-                        foreach (string line in part.SecondBarChordsLines)
+                        foreach (IList<Chord> chords in part.SecondBarChords)
                         {
-                            @line<br/>
+                            if (chords.Count == 1)
+                            {
+                                <a title="@chords[0].Fingering">@chords[0].ToString()</a>
+                            }
+                            else
+                            {
+                                <a title="@chords[0].Fingering">@chords[0].ToString()</a><text>-</text><a title="@chords[1].Fingering">@chords[1].ToString()</a>
+                            }
+                            <br />
                         }
                     }
                 </td>

@@ -19,9 +19,12 @@ namespace SongBook.Web.Models
             }
             _googleSheetProvider =
                 new Provider(config.GoogleCredentialJson, config.ApplicationName, config.GoogleSheetId);
+            IList<ChordData> chordDatas =
+                DataManager.GetValues<ChordData>(_googleSheetProvider, config.GoogleRangeChords);
+            Dictionary<string, Chord> chords = chordDatas.ToDictionary(c => c.Id, c => new Chord(c));
             IList<SongData> songDatas = DataManager.GetValues<SongData>(_googleSheetProvider, config.GoogleRangeIndex);
-            IEnumerable<Song> songs =
-                songDatas.Select(sd => new Song(sd.Name, sd.Author, _googleSheetProvider, config.GoogleRangePostfix));
+            IEnumerable<Song> songs = songDatas.Select(sd =>
+                new Song(sd.Name, sd.Author, _googleSheetProvider, config.GoogleRangePostfix, chords));
             Songs = songs.ToList();
         }
 
