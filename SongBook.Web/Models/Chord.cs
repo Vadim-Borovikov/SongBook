@@ -41,7 +41,7 @@ namespace SongBook.Web.Models
 
         public Chord Transpose(int semitones)
         {
-            byte semitone = (byte)((_semitone + semitones) % Semitones.Length);
+            byte semitone = (byte)((Semitones.Length + _semitone + semitones) % Semitones.Length);
             return new Chord(semitone, _postfix, Fingering, _isSimple);
         }
 
