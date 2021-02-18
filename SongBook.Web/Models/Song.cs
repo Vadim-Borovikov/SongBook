@@ -19,7 +19,7 @@ namespace SongBook.Web.Models
             Author = author;
 
             DefaultCapo = defaultCapo;
-            CurrentTune = GetDefaultTune();
+            CurrentTune = 0;
 
             _chords = chords;
 
@@ -53,7 +53,7 @@ namespace SongBook.Web.Models
             Parts = parts;
         }
 
-        internal void Reset() => TransposeTo((sbyte)GetDefaultTune());
+        internal void Reset() => TransposeTo((sbyte)Invert(DefaultCapo));
 
         internal void TransposeTo(sbyte semitones) => Transpose((sbyte)(semitones - CurrentTune));
 
@@ -72,7 +72,6 @@ namespace SongBook.Web.Models
             }
         }
 
-        private byte GetDefaultTune() => Invert(DefaultCapo);
         private static byte Invert(byte tune) => (byte)((Chord.Semitones.Length - tune) % Chord.Semitones.Length);
 
         private readonly Dictionary<string, Chord> _chords;
