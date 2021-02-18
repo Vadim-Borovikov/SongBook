@@ -20,10 +20,10 @@ namespace SongBook.Web.Models
         internal void SetChord(string chordKey, Dictionary<string, Chord> chords)
         {
             _chordKey = chordKey;
-            SetChord(chords);
+            InitChord(chords);
         }
 
-        internal void SetChord(Dictionary<string, Chord> chords) { Chord = chords[_chordKey]; }
+        internal void InitChord(Dictionary<string, Chord> chords) => Chord = chords[_chordKey];
 
         private string _chordKey;
     }

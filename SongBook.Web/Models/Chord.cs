@@ -25,26 +25,41 @@ namespace SongBook.Web.Models
 
         private readonly byte _semitone;
         private readonly string _postfix;
+        private readonly byte _bass;
 
-        private Chord(byte semitone, string postfix, string fingering, bool isSimple)
+        private Chord(byte semitone, string postfix, byte bass, string fingering, bool isSimple)
         {
             _semitone = semitone;
             _postfix = postfix;
+            _bass = bass;
             Fingering = fingering;
             IsSimple = isSimple;
         }
 
         internal Chord(ChordData data)
-            : this((byte)Semitones.IndexOf(data.Semitone), data.Postfix, data.Fingering, data.IsSimple)
+            : this((byte)Semitones.IndexOf(data.Semitone), data.Postfix, (byte)Semitones.IndexOf(data.Bass),
+                data.Fingering, data.IsSimple)
         {
         }
 
         internal string Transpose(sbyte semitones)
         {
             byte semitone = (byte)((Semitones.Length + _semitone + semitones) % Semitones.Length);
-            return $"{Semitones[semitone]}{_postfix}";
+            byte bass = (byte)((Semitones.Length + _bass + semitones) % Semitones.Length);
+            var transposed = new Chord(semitone, _postfix, bass, Fingering, IsSimple);
+            return transposed.ToString();
         }
 
-        public override string ToString() => $"{Semitones[_semitone]}{_postfix}";
+        public override string ToString()
+        {
+            string semitone = Semitones[_semitone];
+            string bassSemitone = Semitones[_bass];
+            string result = $"{semitone}{_postfix}";
+            if (bassSemitone != semitone)
+            {
+                result += $"/{bassSemitone}";
+            }
+            return result;
+        }
     }
 }

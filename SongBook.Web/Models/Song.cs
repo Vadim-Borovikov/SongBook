@@ -26,16 +26,16 @@ namespace SongBook.Web.Models
             IList<HalfBarData> halfBars = DataManager.GetValues<HalfBarData>(provider, $"{Name}{sheetPostfix}");
             var parts = new List<Part>();
             Part currentPart = null;
-            foreach (HalfBarData halfBar in halfBars)
+            foreach (HalfBarData halfBarData in halfBars)
             {
-                halfBar.SetChord(_chords);
-                if (string.IsNullOrWhiteSpace(halfBar.Part))
+                halfBarData.InitChord(_chords);
+                if (string.IsNullOrWhiteSpace(halfBarData.Part))
                 {
                     if (currentPart == null)
                     {
                         throw new NullReferenceException("Empty part!");
                     }
-                    currentPart.HalfBars.Add(halfBar);
+                    currentPart.HalfBars.Add(halfBarData);
                 }
                 else
                 {
@@ -43,7 +43,7 @@ namespace SongBook.Web.Models
                     {
                         parts.Add(currentPart);
                     }
-                    currentPart = new Part(halfBar);
+                    currentPart = new Part(halfBarData);
                 }
             }
             if (currentPart != null)

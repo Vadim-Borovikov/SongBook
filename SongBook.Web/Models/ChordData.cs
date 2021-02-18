@@ -8,6 +8,7 @@ namespace SongBook.Web.Models
         public string Id;
         public string Semitone;
         public string Postfix;
+        public string Bass;
         public string Fingering;
         public bool IsSimple;
 
@@ -16,8 +17,9 @@ namespace SongBook.Web.Models
             Id = values.ToString(0);
             Semitone = values.ToString(1);
             Postfix = values.ToString(2);
-            Fingering = values.ToString(3);
-            IsSimple = values.ToBool(4) ?? false;
+            Bass = values.ToString(3);
+            Fingering = values.ToString(4);
+            IsSimple = values.ToBool(5) ?? false;
         }
     }
 }
