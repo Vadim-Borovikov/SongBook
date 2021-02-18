@@ -49,10 +49,11 @@
             </td>
         </tr>;
 
-    <div class="text-center">
-        <h1 class="display-4">@Model.Song.Name</h1>
-        <h3 class="display-4">@Model.Song.Author</h3>
-    </div>
+        <a href="/">Все песни</a>
+        <div class="text-center">
+            <h1 class="display-4">@Model.Song.Name</h1>
+            <h3 class="display-4">@Model.Song.Author</h3>
+        </div>
     <div>
         Capo: <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune+1)" class="btn btn-default">–</a> @Model.Song.GetCurrentCapo() <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune-1)" class="btn btn-default">+</a>
     </div>
