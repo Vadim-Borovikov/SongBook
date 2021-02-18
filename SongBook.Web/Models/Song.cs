@@ -11,11 +11,14 @@ namespace SongBook.Web.Models
 
         internal readonly IReadOnlyList<Part> Parts;
 
-        internal Song(string name, string author, Provider provider, string sheetPostfix,
+        internal Song(string name, string author, byte defaultTune, Provider provider, string sheetPostfix,
             Dictionary<string, Chord> chords)
         {
             Name = name;
             Author = author;
+
+            DefaultTune = defaultTune;
+            CurrentTune = DefaultTune;
 
             _chords = chords;
 

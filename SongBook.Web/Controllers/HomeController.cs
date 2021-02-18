@@ -25,7 +25,7 @@ namespace SongBook.Web.Controllers
 
             if (semitones.HasValue)
             {
-                song.TransposeTo((byte) (song.DefaultTune + semitones.Value));
+                song.TransposeTo(semitones.Value);
             }
             else
             {

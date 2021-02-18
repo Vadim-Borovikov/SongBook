@@ -8,7 +8,7 @@ namespace SongBook.Web.Models
         public string Name { get; protected set; }
         public string Author { get; protected set; }
 
-        internal byte DefaultTune { get; private set; }
+        protected internal byte DefaultTune { get; protected set; }
 
         public void Load(IList<object> values)
         {

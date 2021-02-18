@@ -24,7 +24,7 @@ namespace SongBook.Web.Models
             Dictionary<string, Chord> chords = chordDatas.ToDictionary(c => c.Id, c => new Chord(c));
             IList<SongData> songDatas = DataManager.GetValues<SongData>(_googleSheetProvider, config.GoogleRangeIndex);
             IEnumerable<Song> songs = songDatas.Select(sd =>
-                new Song(sd.Name, sd.Author, _googleSheetProvider, config.GoogleRangePostfix, chords));
+                new Song(sd.Name, sd.Author, sd.DefaultTune, _googleSheetProvider, config.GoogleRangePostfix, chords));
             Songs = songs.ToList();
         }
 
