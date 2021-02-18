@@ -44,8 +44,8 @@ namespace SongBook.Web.Models
 
         internal string Transpose(sbyte semitones)
         {
-            byte semitone = (byte)((Semitones.Length + _semitone + semitones) % Semitones.Length);
-            byte bass = (byte)((Semitones.Length + _bass + semitones) % Semitones.Length);
+            byte semitone = Transpose(_semitone, semitones);
+            byte bass = Transpose(_bass, semitones);
             var transposed = new Chord(semitone, _postfix, bass, Fingering, IsSimple);
             return transposed.ToString();
         }
@@ -60,6 +60,11 @@ namespace SongBook.Web.Models
                 result += $"/{bassSemitone}";
             }
             return result;
+        }
+
+        private static byte Transpose(byte semitone, sbyte semitones)
+        {
+            return (byte)((Semitones.Length + semitone + semitones) % Semitones.Length);
         }
     }
 }
