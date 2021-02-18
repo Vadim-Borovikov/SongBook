@@ -4,7 +4,7 @@ namespace SongBook.Web.Models
 {
     public sealed class Chord
     {
-        private static readonly string[] Semitones =
+        internal static readonly string[] Semitones =
         {
             "A",
             "A#",
@@ -39,10 +39,10 @@ namespace SongBook.Web.Models
         {
         }
 
-        public Chord Transpose(int semitones)
+        internal string Transpose(sbyte semitones)
         {
             byte semitone = (byte)((Semitones.Length + _semitone + semitones) % Semitones.Length);
-            return new Chord(semitone, _postfix, Fingering, _isSimple);
+            return $"{Semitones[semitone]}{_postfix}";
         }
 
         public override string ToString() => $"{Semitones[_semitone]}{_postfix}";

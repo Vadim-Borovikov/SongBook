@@ -8,21 +8,31 @@ namespace SongBook.Web.Controllers
     public sealed class HomeController : Controller
     {
         [HttpGet]
-        [Route("")]
         public IActionResult Index([FromServices]Manager manager)
         {
             if (manager.Songs.Count == 1)
             {
-                return Redirect("0");
+                return Redirect("song?id=0");
             }
             return View(manager.Songs);
         }
 
-        [Route("{id}")]
-        public IActionResult SongView(int id, [FromServices]Manager manager)
+        [HttpGet]
+        [Route("song")]
+        public IActionResult SongView(int id, byte? semitones, [FromServices]Manager manager)
         {
             Song song = manager.Songs[id];
-            var songViewModel = new SongViewModel(song);
+
+            if (semitones.HasValue)
+            {
+                song.TransposeTo((byte) (song.DefaultTune + semitones.Value));
+            }
+            else
+            {
+                song.Reset();
+            }
+
+            var songViewModel = new SongViewModel(song, id);
             return View(songViewModel);
         }
 

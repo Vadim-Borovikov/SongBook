@@ -5,9 +5,10 @@ namespace SongBook.Web.Models
 {
     public sealed class SongViewModel
     {
-        public SongViewModel(Song song)
+        public SongViewModel(Song song, int id)
         {
             Song = song;
+            Id = id;
             Parts = new List<PartViewModel>(Song.Parts.Count);
             for (int i = 0; i < Song.Parts.Count; ++i)
             {
@@ -19,6 +20,7 @@ namespace SongBook.Web.Models
         }
 
         public readonly Song Song;
+        public readonly int Id;
         public readonly List<PartViewModel> Parts;
     }
 }

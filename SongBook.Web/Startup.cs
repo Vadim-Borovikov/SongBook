@@ -37,7 +37,7 @@ namespace SongBook.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseMvc(routes => routes.MapRoute("update", $"{_config["Token"]}/{{controller=Update}}/{{action=post}}"));
+            app.UseMvc(routes => routes.MapRoute("default", "{controller=Home}/{action=Index}"));
         }
 
         private readonly IConfiguration _config;

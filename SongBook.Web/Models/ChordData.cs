@@ -3,7 +3,7 @@ using GoogleSheetsManager;
 
 namespace SongBook.Web.Models
 {
-    public class ChordData : ILoadable
+    internal sealed class ChordData : ILoadable
     {
         public string Id;
         public string Semitone;
