@@ -54,7 +54,7 @@
         <h3 class="display-4">@Model.Song.Author</h3>
     </div>
     <div>
-        <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune-1)" class="btn btn-default">–</a> @Model.Song.CurrentTune <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune+1)" class="btn btn-default">+</a>
+        Capo: <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune+1)" class="btn btn-default">–</a> @Model.Song.GetCurrentCapo() <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune-1)" class="btn btn-default">+</a>
     </div>
     <table>
         @foreach (PartViewModel part in Model.Parts)

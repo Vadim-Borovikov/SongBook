@@ -8,17 +8,18 @@ namespace SongBook.Web.Models
     public sealed class Song : SongData
     {
         public byte CurrentTune { get; private set; }
+        public byte GetCurrentCapo() => Invert(CurrentTune);
 
         internal readonly IReadOnlyList<Part> Parts;
 
-        internal Song(string name, string author, byte defaultTune, Provider provider, string sheetPostfix,
+        internal Song(string name, string author, byte defaultCapo, Provider provider, string sheetPostfix,
             Dictionary<string, Chord> chords)
         {
             Name = name;
             Author = author;
 
-            DefaultTune = defaultTune;
-            CurrentTune = DefaultTune;
+            DefaultCapo = defaultCapo;
+            CurrentTune = GetDefaultTune();
 
             _chords = chords;
 
@@ -52,7 +53,7 @@ namespace SongBook.Web.Models
             Parts = parts;
         }
 
-        internal void Reset() => TransposeTo(DefaultTune);
+        internal void Reset() => TransposeTo(GetDefaultTune());
 
         internal void TransposeTo(byte semitones) => Transpose((sbyte)(semitones - CurrentTune));
 
@@ -70,6 +71,9 @@ namespace SongBook.Web.Models
                 halfBarData.SetChord(chordKey, _chords);
             }
         }
+
+        private byte GetDefaultTune() => Invert(DefaultCapo);
+        private static byte Invert(byte tune) => (byte)((Chord.Semitones.Length - tune) % Chord.Semitones.Length);
 
         private readonly Dictionary<string, Chord> _chords;
     }
