@@ -11,26 +11,33 @@ namespace SongBook.Web.Models
     {
         public Manager(IOptions<Config> options)
         {
-            Config config = options.Value;
+            _config = options.Value;
 
-            if (string.IsNullOrWhiteSpace(config.GoogleCredentialJson))
+            if (string.IsNullOrWhiteSpace(_config.GoogleCredentialJson))
             {
-                config.GoogleCredentialJson = JsonConvert.SerializeObject(config.GoogleCredential);
+                _config.GoogleCredentialJson = JsonConvert.SerializeObject(_config.GoogleCredential);
             }
             _googleSheetProvider =
-                new Provider(config.GoogleCredentialJson, config.ApplicationName, config.GoogleSheetId);
-            IList<ChordData> chordDatas =
-                DataManager.GetValues<ChordData>(_googleSheetProvider, config.GoogleRangeChords);
-            Dictionary<string, Chord> chords = chordDatas.ToDictionary(c => c.Id, c => new Chord(c));
-            IList<SongData> songDatas = DataManager.GetValues<SongData>(_googleSheetProvider, config.GoogleRangeIndex);
-            IEnumerable<Song> songs = songDatas.Select(sd =>
-                new Song(sd.Name, sd.Author, sd.DefaultCapo, _googleSheetProvider, config.GoogleRangePostfix, chords));
-            Songs = songs.ToList();
+                new Provider(_config.GoogleCredentialJson, _config.ApplicationName, _config.GoogleSheetId);
         }
 
         public void Dispose() => _googleSheetProvider?.Dispose();
 
-        internal readonly IList<Song> Songs;
+        internal void LoadSongs()
+        {
+            IList<ChordData> chordDatas =
+                DataManager.GetValues<ChordData>(_googleSheetProvider, _config.GoogleRangeChords);
+            Dictionary<string, Chord> chords = chordDatas.ToDictionary(c => c.Id, c => new Chord(c));
+            IList<SongData> songDatas =
+                DataManager.GetValues<SongData>(_googleSheetProvider, _config.GoogleRangeIndex);
+            IEnumerable<Song> songs = songDatas.Select(sd => new Song(sd.Name, sd.Author, sd.DefaultCapo,
+                _googleSheetProvider, _config.GoogleRangePostfix, chords));
+            Songs = songs.ToList();
+        }
+
+        internal IList<Song> Songs;
+
+        private readonly Config _config;
         private readonly Provider _googleSheetProvider;
     }
 }

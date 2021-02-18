@@ -10,6 +10,7 @@ namespace SongBook.Web.Controllers
         [HttpGet]
         public IActionResult Index([FromServices]Manager manager)
         {
+            manager.LoadSongs();
             if (manager.Songs.Count == 1)
             {
                 return Redirect("song?id=0");
