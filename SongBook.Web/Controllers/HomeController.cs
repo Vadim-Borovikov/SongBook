@@ -20,7 +20,7 @@ namespace SongBook.Web.Controllers
 
         [HttpGet]
         [Route("song")]
-        public IActionResult SongView(int id, byte? semitones, [FromServices]Manager manager)
+        public IActionResult SongView(int id, sbyte? semitones, [FromServices]Manager manager)
         {
             Song song = manager.Songs[id];
 

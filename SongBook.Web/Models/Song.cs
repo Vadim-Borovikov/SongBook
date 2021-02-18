@@ -53,9 +53,9 @@ namespace SongBook.Web.Models
             Parts = parts;
         }
 
-        internal void Reset() => TransposeTo(GetDefaultTune());
+        internal void Reset() => TransposeTo((sbyte)GetDefaultTune());
 
-        internal void TransposeTo(byte semitones) => Transpose((sbyte)(semitones - CurrentTune));
+        internal void TransposeTo(sbyte semitones) => Transpose((sbyte)(semitones - CurrentTune));
 
         private void Transpose(sbyte semitones)
         {
