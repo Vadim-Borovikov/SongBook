@@ -3,20 +3,12 @@ using GoogleSheetsManager;
 
 namespace SongBook.Web.Models
 {
-    internal sealed class HalfBarData : ILoadable
+    public sealed class HalfBarData : ILoadable
     {
-        public string Part { get; private set; }
-        public string Text { get; private set; }
+        internal string Part { get; private set; }
+        internal string Text { get; private set; }
 
         public Chord Chord { get; private set; }
-
-        public void SetChord(string chordKey, Dictionary<string, Chord> chords)
-        {
-            _chordKey = chordKey;
-            SetChord(chords);
-        }
-
-        public void SetChord(Dictionary<string, Chord> chords) { Chord = chords[_chordKey]; }
 
         public void Load(IList<object> values)
         {
@@ -24,6 +16,14 @@ namespace SongBook.Web.Models
             _chordKey = values.ToString(1);
             Text = values.ToString(2);
         }
+
+        internal void SetChord(string chordKey, Dictionary<string, Chord> chords)
+        {
+            _chordKey = chordKey;
+            SetChord(chords);
+        }
+
+        internal void SetChord(Dictionary<string, Chord> chords) { Chord = chords[_chordKey]; }
 
         private string _chordKey;
     }

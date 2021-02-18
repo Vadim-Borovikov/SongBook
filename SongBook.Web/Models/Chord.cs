@@ -21,17 +21,17 @@ namespace SongBook.Web.Models
         };
 
         public readonly string Fingering;
+        public readonly bool IsSimple;
 
         private readonly byte _semitone;
         private readonly string _postfix;
-        private readonly bool _isSimple;
 
         private Chord(byte semitone, string postfix, string fingering, bool isSimple)
         {
             _semitone = semitone;
             _postfix = postfix;
             Fingering = fingering;
-            _isSimple = isSimple;
+            IsSimple = isSimple;
         }
 
         internal Chord(ChordData data)
