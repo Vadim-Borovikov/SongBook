@@ -10,6 +10,8 @@ namespace SongBook.Web.Models
         public byte CurrentTune { get; private set; }
         public byte GetCurrentCapo() => Invert(CurrentTune);
 
+        internal byte GetDefaultTune() => Invert(DefaultCapo);
+
         internal readonly IReadOnlyList<Part> Parts;
 
         internal Song(string name, string author, byte defaultCapo, Provider provider, string sheetPostfix,
@@ -52,8 +54,6 @@ namespace SongBook.Web.Models
             }
             Parts = parts;
         }
-
-        internal void Reset() => TransposeTo((sbyte)Invert(DefaultCapo));
 
         internal void TransposeTo(sbyte semitones) => Transpose((sbyte)(semitones - CurrentTune));
 

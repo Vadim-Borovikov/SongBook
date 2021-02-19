@@ -11,10 +11,6 @@ namespace SongBook.Web.Controllers
         public IActionResult Index([FromServices]Manager manager)
         {
             manager.LoadSongs();
-            if (manager.Songs.Count == 1)
-            {
-                return Redirect("song?id=0");
-            }
             return View(manager.Songs);
         }
 
@@ -24,15 +20,12 @@ namespace SongBook.Web.Controllers
         {
             Song song = manager.Songs[id];
 
-            if (semitones.HasValue)
+            if (!semitones.HasValue)
             {
-                song.TransposeTo(semitones.Value);
-            }
-            else
-            {
-                song.Reset();
+                semitones = (sbyte) song.GetDefaultTune();
             }
 
+            song.TransposeTo(semitones.Value);
             var songViewModel = new SongViewModel(song, id);
             return View(songViewModel);
         }
