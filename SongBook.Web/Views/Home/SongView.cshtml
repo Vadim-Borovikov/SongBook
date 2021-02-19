@@ -57,13 +57,15 @@
     <div>
         Capo: <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune+1)" class="btn btn-default">–</a> @Model.Song.GetCurrentCapo() <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune-1)" class="btn btn-default">+</a>
     </div>
-    <div>
+    <table>
         @foreach (Chord chord in Model.Parts.SelectMany(p => p.Part.HalfBars).Select(hb => hb.Chord).Distinct().Where(c => !c.IsSimple))
         {
-            @chord.ToString()@:: @chord.Fingering
-            <br />
+            <tr>
+                <td>@chord.ToString()</td>
+                <td>@chord.Fingering</td>
+            </tr>
         }
-    </div>
+    </table>
     <table>
         @foreach (PartViewModel part in Model.Parts)
         {
