@@ -27,7 +27,7 @@ namespace SongBook.Web.Models
         {
             IList<ChordData> chordDatas =
                 DataManager.GetValues<ChordData>(_googleSheetProvider, _config.GoogleRangeChords);
-            Dictionary<string, Chord> chords = chordDatas.ToDictionary(c => c.Id, c => new Chord(c));
+            Dictionary<string, Chord> chords = chordDatas.ToDictionary(c => c.ToString(), c => new Chord(c));
             IList<SongData> songDatas =
                 DataManager.GetValues<SongData>(_googleSheetProvider, _config.GoogleRangeIndex);
             IEnumerable<Song> songs = songDatas.Select(sd => new Song(sd.Name, sd.Author, sd.DefaultCapo,
