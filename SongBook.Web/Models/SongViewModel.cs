@@ -10,11 +10,13 @@ namespace SongBook.Web.Models
             Song = song;
             Id = id;
             Parts = new List<PartViewModel>(Song.Parts.Count);
+            PartViewModel viewModel = null;
             for (int i = 0; i < Song.Parts.Count; ++i)
             {
                 Part part = Song.Parts[i];
                 bool isRepeat = Song.Parts.Take(i).Any(p => p.Name == part.Name);
-                var viewModel = new PartViewModel(part, isRepeat);
+                bool wasProviousCutted = viewModel?.IsCutted ?? false;
+                viewModel = new PartViewModel(part, isRepeat, wasProviousCutted);
                 Parts.Add(viewModel);
             }
         }
