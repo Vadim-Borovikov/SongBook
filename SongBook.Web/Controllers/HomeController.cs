@@ -10,7 +10,7 @@ namespace SongBook.Web.Controllers
         [HttpGet]
         public IActionResult Index([FromServices]Manager manager)
         {
-            manager.LoadSongs();
+            manager.LoadIndex();
             return View(manager.Songs);
         }
 
@@ -22,6 +22,7 @@ namespace SongBook.Web.Controllers
 
             if (!semitones.HasValue)
             {
+                manager.LoadSong(song);
                 semitones = (sbyte) song.GetDefaultTune();
             }
 

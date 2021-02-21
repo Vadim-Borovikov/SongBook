@@ -23,19 +23,19 @@ namespace SongBook.Web.Models
 
         public void Dispose() => _googleSheetProvider?.Dispose();
 
-        internal void LoadSongs()
+        internal void LoadIndex()
         {
             IList<Chord> chordsList = DataManager.GetValues<Chord>(_googleSheetProvider, _config.GoogleRangeChords);
-            Dictionary<string, Chord> chords = chordsList.ToDictionary(c => c.ToString(), c => c);
+            _chords = chordsList.ToDictionary(c => c.ToString(), c => c);
 
             Songs = DataManager.GetValues<Song>(_googleSheetProvider, _config.GoogleRangeIndex);
-            foreach (Song song in Songs)
-            {
-                song.Load(_googleSheetProvider, _config.GoogleRangePostfix, chords);
-            }
         }
 
+        internal void LoadSong(Song song) => song.Load(_googleSheetProvider, _config.GoogleRangePostfix, _chords);
+
         internal IList<Song> Songs;
+
+        private Dictionary<string, Chord> _chords;
 
         private readonly Config _config;
         private readonly Provider _googleSheetProvider;
