@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
+﻿using System.Collections.Generic;
+using GoogleSheetsManager;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace SongBook.Web.Models
 {
-    public sealed class Chord
+    public sealed class Chord : ILoadable
     {
         internal static readonly string[] Semitones =
         {
@@ -20,14 +22,34 @@ namespace SongBook.Web.Models
             "G#"
         };
 
-        public readonly string Fingering;
-        public readonly bool IsSimple;
+        public string Fingering;
+        public bool IsSimple;
 
-        private readonly byte _semitone;
-        private readonly string _postfix;
-        private readonly byte _bass;
+        public Chord() { }
 
-        private Chord(byte semitone, string postfix, byte bass, string fingering, bool isSimple)
+        public void Load(IList<object> values)
+        {
+            _semitone = values.ToString(0);
+            _postfix = values.ToString(1);
+            _bass = values.ToString(2);
+            Fingering = values.ToString(3);
+            IsSimple = values.ToBool(4) ?? false;
+        }
+
+        public override string ToString()
+        {
+            return _bass == _semitone ? $"{_semitone}{_postfix}" : $"{_semitone}{_postfix}/{_bass}";
+        }
+
+        internal string Transpose(sbyte semitones)
+        {
+            string semitone = Transpose(_semitone, semitones);
+            string bass = Transpose(_bass, semitones);
+            var transposed = new Chord(semitone, _postfix, bass, Fingering, IsSimple);
+            return transposed.ToString();
+        }
+
+        private Chord(string semitone, string postfix, string bass, string fingering, bool isSimple)
         {
             _semitone = semitone;
             _postfix = postfix;
@@ -36,35 +58,14 @@ namespace SongBook.Web.Models
             IsSimple = isSimple;
         }
 
-        internal Chord(ChordData data)
-            : this((byte)Semitones.IndexOf(data.Semitone), data.Postfix, (byte)Semitones.IndexOf(data.Bass),
-                data.Fingering, data.IsSimple)
+        private static string Transpose(string semitone, sbyte semitones)
         {
+            int index = (Semitones.Length + Semitones.IndexOf(semitone) + semitones) % Semitones.Length;
+            return Semitones[index];
         }
 
-        internal string Transpose(sbyte semitones)
-        {
-            byte semitone = Transpose(_semitone, semitones);
-            byte bass = Transpose(_bass, semitones);
-            var transposed = new Chord(semitone, _postfix, bass, Fingering, IsSimple);
-            return transposed.ToString();
-        }
-
-        public override string ToString()
-        {
-            string semitone = Semitones[_semitone];
-            string bassSemitone = Semitones[_bass];
-            string result = $"{semitone}{_postfix}";
-            if (bassSemitone != semitone)
-            {
-                result += $"/{bassSemitone}";
-            }
-            return result;
-        }
-
-        private static byte Transpose(byte semitone, sbyte semitones)
-        {
-            return (byte)((Semitones.Length + semitone + semitones) % Semitones.Length);
-        }
+        private string _semitone;
+        private string _postfix;
+        private string _bass;
     }
 }

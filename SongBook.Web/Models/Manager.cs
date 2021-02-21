@@ -25,14 +25,14 @@ namespace SongBook.Web.Models
 
         internal void LoadSongs()
         {
-            IList<ChordData> chordDatas =
-                DataManager.GetValues<ChordData>(_googleSheetProvider, _config.GoogleRangeChords);
-            Dictionary<string, Chord> chords = chordDatas.ToDictionary(c => c.ToString(), c => new Chord(c));
-            IList<SongData> songDatas =
-                DataManager.GetValues<SongData>(_googleSheetProvider, _config.GoogleRangeIndex);
-            IEnumerable<Song> songs = songDatas.Select(sd => new Song(sd.Name, sd.Author, sd.DefaultCapo,
-                _googleSheetProvider, _config.GoogleRangePostfix, chords));
-            Songs = songs.ToList();
+            IList<Chord> chordsList = DataManager.GetValues<Chord>(_googleSheetProvider, _config.GoogleRangeChords);
+            Dictionary<string, Chord> chords = chordsList.ToDictionary(c => c.ToString(), c => c);
+
+            Songs = DataManager.GetValues<Song>(_googleSheetProvider, _config.GoogleRangeIndex);
+            foreach (Song song in Songs)
+            {
+                song.Load(_googleSheetProvider, _config.GoogleRangePostfix, chords);
+            }
         }
 
         internal IList<Song> Songs;

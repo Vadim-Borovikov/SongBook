@@ -5,24 +5,25 @@ using GoogleSheetsManager;
 
 namespace SongBook.Web.Models
 {
-    public sealed class Song : SongData
+    public sealed class Song : ILoadable
     {
+        public string Name { get; private set; }
+        public string Author { get; private set; }
+
         public byte CurrentTune { get; private set; }
         public byte GetCurrentCapo() => Invert(CurrentTune);
 
-        internal byte GetDefaultTune() => Invert(DefaultCapo);
+        internal IReadOnlyList<Part> Parts;
 
-        internal readonly IReadOnlyList<Part> Parts;
-
-        internal Song(string name, string author, byte defaultCapo, Provider provider, string sheetPostfix,
-            Dictionary<string, Chord> chords)
+        public void Load(IList<object> values)
         {
-            Name = name;
-            Author = author;
+            Name = values.ToString(0);
+            Author = values.ToString(1);
+            _defaultCapo = (byte)(values.ToInt(2) ?? 0);
+        }
 
-            DefaultCapo = defaultCapo;
-            CurrentTune = 0;
-
+        internal void Load(Provider provider, string sheetPostfix, Dictionary<string, Chord> chords)
+        {
             _chords = chords;
 
             IList<HalfBarData> halfBars = DataManager.GetValues<HalfBarData>(provider, $"{Name}{sheetPostfix}");
@@ -55,6 +56,8 @@ namespace SongBook.Web.Models
             Parts = parts;
         }
 
+        internal byte GetDefaultTune() => Invert(_defaultCapo);
+
         internal void TransposeTo(sbyte semitones) => Transpose((sbyte)(semitones - CurrentTune));
 
         private void Transpose(sbyte semitones)
@@ -74,6 +77,7 @@ namespace SongBook.Web.Models
 
         private static byte Invert(byte tune) => (byte)((Chord.Semitones.Length - tune) % Chord.Semitones.Length);
 
-        private readonly Dictionary<string, Chord> _chords;
+        private byte _defaultCapo;
+        private Dictionary<string, Chord> _chords;
     }
 }
