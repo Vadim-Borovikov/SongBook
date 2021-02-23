@@ -11,8 +11,8 @@ namespace SongBook.Web.Models
             Part = part;
             IsRepeat = isRepeat;
 
-            FirstBarChords = new List<IList<Chord>>();
-            SecondBarChords = new List<IList<Chord>>();
+            FirstBarChords = new List<IList<ChordViewModel>>();
+            SecondBarChords = new List<IList<ChordViewModel>>();
             TextLines = new List<string>();
 
             bool isCutted = false;
@@ -20,7 +20,7 @@ namespace SongBook.Web.Models
             {
                 List<HalfBarData> line = Part.HalfBars.Skip(i).Take(LineSize).ToList();
 
-                List<Chord> chords = line.Select(l => l.Chord).ToList();
+                List<ChordViewModel> chords = line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
                 FirstBarChords.Add(GetChords(chords.Take(2).ToList()));
                 SecondBarChords.Add(GetChords(chords.Skip(2).ToList()));
 
@@ -49,9 +49,9 @@ namespace SongBook.Web.Models
             IsCutted = isCutted;
         }
 
-        private static IList<Chord> GetChords(IList<Chord> chords)
+        private static IList<ChordViewModel> GetChords(IList<ChordViewModel> chords)
         {
-            if ((chords.Count == 2) && (chords[0] == chords[1]))
+            if ((chords.Count == 2) && Equals(chords[0], chords[1]))
             {
                 return new[] { chords[0] };
             }
@@ -60,8 +60,8 @@ namespace SongBook.Web.Models
         }
 
         public readonly Part Part;
-        public readonly IList<IList<Chord>> FirstBarChords;
-        public readonly IList<IList<Chord>> SecondBarChords;
+        public readonly IList<IList<ChordViewModel>> FirstBarChords;
+        public readonly IList<IList<ChordViewModel>> SecondBarChords;
         public readonly IList<string> TextLines;
         public readonly bool IsRepeat;
 

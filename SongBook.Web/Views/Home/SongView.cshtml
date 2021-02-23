@@ -3,9 +3,9 @@
 @{
     ViewData["Title"] = "Home Page";
 
-    Func<Chord, object> renderChord = @<a title="@item.Fingering">@item.ToString()</a>;
+    Func<ChordViewModel, object> renderChord = @<a title="@item.Fingering">@item.ToString()</a>;
 
-    Func<IList<Chord>, object> renderChords =
+    Func<IList<ChordViewModel>, object> renderChords =
         @<text>
             @if (item.Count == 1)
             {
@@ -18,9 +18,9 @@
             <br />
         </text>;
 
-    Func<IList<IList<Chord>>, object> renderChordsLine =
+    Func<IList<IList<ChordViewModel>>, object> renderChordsLine =
         @<text>
-            @foreach (IList<Chord> chords in item)
+            @foreach (IList<ChordViewModel> chords in item)
             {
                 @renderChords(chords)
             }
@@ -58,11 +58,15 @@
         Capo: <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune+1)" class="btn btn-default">–</a> @Model.Song.GetCurrentCapo() <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune-1)" class="btn btn-default">+</a>
     </div>
     <table>
-        @foreach (Chord chord in Model.Parts.SelectMany(p => p.Part.HalfBars).Select(hb => hb.Chord).Distinct().Where(c => !c.IsSimple))
+        @foreach (ChordViewModel chordViewModel in Model.Parts
+                                                        .SelectMany(p => p.Part.HalfBars)
+                                                        .Select(hb => new ChordViewModel(hb.Chord, hb.ChordOption))
+                                                        .Distinct()
+                                                        .Where(c => !c.IsSimple))
         {
             <tr>
-                <td>@chord.ToString()</td>
-                <td>@chord.Fingering</td>
+                <td>@chordViewModel.ToString()</td>
+                <td>@chordViewModel.Fingering</td>
             </tr>
         }
     </table>
