@@ -13,7 +13,15 @@ namespace SongBook.Web.Models
             _option = option;
         }
 
-        public override string ToString() => _chord.ToString();
+        public override string ToString()
+        {
+            string chord = _chord.ToString();
+            if (_option > 0)
+            {
+                chord += $"({_option + 1})";
+            }
+            return chord;
+        }
 
         public bool Equals(ChordViewModel other)
         {
