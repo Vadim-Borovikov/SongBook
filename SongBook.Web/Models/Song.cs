@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Google.Apis.Sheets.v4;
 using GoogleSheetsManager;
 
 namespace SongBook.Web.Models
@@ -26,12 +27,13 @@ namespace SongBook.Web.Models
         {
             _chords = chords;
 
-            IList<HalfBarData> halfBars = DataManager.GetValues<HalfBarData>(provider, $"{Name}{sheetPostfix}");
+            IList<HalfBarData> halfBars = DataManager.GetValues<HalfBarData>(provider, $"{Name}{sheetPostfix}",
+                SpreadsheetsResource.ValuesResource.GetRequest.ValueRenderOptionEnum.FORMULA);
             var parts = new List<Part>();
             Part currentPart = null;
             foreach (HalfBarData halfBarData in halfBars)
             {
-                halfBarData.InitChord(_chords);
+                halfBarData.InitMusic(_chords);
                 if (string.IsNullOrWhiteSpace(halfBarData.Part))
                 {
                     if (currentPart == null)
@@ -68,7 +70,7 @@ namespace SongBook.Web.Models
             }
 
             CurrentTune = (byte)((Chord.Semitones.Length + CurrentTune + semitones) % Chord.Semitones.Length);
-            foreach (HalfBarData halfBarData in Parts.SelectMany(p => p.HalfBars))
+            foreach (HalfBarData halfBarData in Parts.SelectMany(p => p.HalfBars).Where(h => h.Chord != null))
             {
                 string chordKey = halfBarData.Chord.Transpose(semitones);
                 halfBarData.SetChord(chordKey, _chords);

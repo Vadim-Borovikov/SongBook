@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -11,6 +12,7 @@ namespace SongBook.Web.Models
             Part = part;
             IsRepeat = isRepeat;
 
+            Tabs = new List<Uri>();
             FirstBarChords = new List<IList<ChordViewModel>>();
             SecondBarChords = new List<IList<ChordViewModel>>();
             TextLines = new List<string>();
@@ -20,9 +22,17 @@ namespace SongBook.Web.Models
             {
                 List<HalfBarData> line = Part.HalfBars.Skip(i).Take(LineSize).ToList();
 
-                List<ChordViewModel> chords = line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
-                FirstBarChords.Add(GetChords(chords.Take(2).ToList()));
-                SecondBarChords.Add(GetChords(chords.Skip(2).ToList()));
+                Uri tab = line[0].Tab;
+                if (tab == null)
+                {
+                    List<ChordViewModel> chords = line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
+                    FirstBarChords.Add(GetChords(chords.Take(2).ToList()));
+                    SecondBarChords.Add(GetChords(chords.Skip(2).ToList()));
+                }
+                else
+                {
+                    Tabs.Add(tab);
+                }
 
                 string words = line.Select(l => l.Text).Join("");
                 isCutted = false;
@@ -62,6 +72,7 @@ namespace SongBook.Web.Models
         public readonly Part Part;
         public readonly IList<IList<ChordViewModel>> FirstBarChords;
         public readonly IList<IList<ChordViewModel>> SecondBarChords;
+        public readonly IList<Uri> Tabs;
         public readonly IList<string> TextLines;
         public readonly bool IsRepeat;
 

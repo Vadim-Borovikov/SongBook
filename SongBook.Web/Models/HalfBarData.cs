@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GoogleSheetsManager;
 
 namespace SongBook.Web.Models
@@ -8,30 +9,54 @@ namespace SongBook.Web.Models
         internal string Part { get; private set; }
         internal string Text { get; private set; }
 
+        internal Uri Tab { get; private set; }
+
         public Chord Chord { get; private set; }
         public int ChordOption { get; private set; }
 
         public void Load(IList<object> values)
         {
             Part = values.ToString(0);
-            _chordKey = values.ToString(1);
+
+            _music = values.ToString(1);
+
             _initialChordOption = (values.ToInt(2) ?? 1) - 1;
+
             Text = values.ToString(3);
         }
 
         internal void SetChord(string chordKey, Dictionary<string, Chord> chords)
         {
-            _chordKey = chordKey;
-            InitChord(chords);
+            _music = chordKey;
+            InitMusic(chords);
         }
 
-        internal void InitChord(Dictionary<string, Chord> chords)
+        internal void InitMusic(Dictionary<string, Chord> chords)
         {
-            Chord = chords[_chordKey];
-            ChordOption = string.IsNullOrWhiteSpace(Chord.Fingerings[_initialChordOption]) ? 0 : _initialChordOption;
+            if (_music == null)
+            {
+                return;
+            }
+
+            if (chords.ContainsKey(_music))
+            {
+                Chord = chords[_music];
+                ChordOption = string.IsNullOrWhiteSpace(Chord.Fingerings[_initialChordOption])
+                    ? 0
+                    : _initialChordOption;
+            }
+            else
+            {
+                string tabUrl =
+                    _music.Substring(TabPrefix.Length, _music.Length - TabPrefix.Length - TabPostfix.Length);
+                Tab = new Uri(tabUrl);
+            }
         }
 
-        private string _chordKey;
+        private const string TabPrefix = "=IMAGE(\"";
+        private const string TabPostfix = "\")";
+
+        private string _music;
         private int _initialChordOption;
     }
 }

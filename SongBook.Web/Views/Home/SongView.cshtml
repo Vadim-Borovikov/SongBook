@@ -26,21 +26,44 @@
             }
         </text>;
 
+    Func<IList<Uri>, object> renderTabs =
+        @<text>
+            @foreach (Uri tab in item)
+            {
+                <img src="@tab" height="75" /><br />
+            }
+         </text>;
+
+    Func<PartViewModel, object> renderMusic =
+        @<text>
+            @if (item.IsRepeat)
+            {
+                <td colspan="2"/>
+            }
+            else
+            {
+                if (item.Tabs.Count > 0)
+                 {
+                     <td colspan="2">
+                         @renderTabs(item.Tabs)
+                     </td>
+                 }
+                 else
+                 {
+                     <td>
+                         @renderChordsLine(item.FirstBarChords)
+                     </td>
+                     <td>
+                         @renderChordsLine(item.SecondBarChords)
+                     </td>
+                 }
+            }
+         </text>;
+
     Func<PartViewModel, object> renderPart =
         @<tr>
             <td valign="top">@item.Part.Name</td>
-            <td>
-                @if (!item.IsRepeat)
-                {
-                    @renderChordsLine(item.FirstBarChords)
-                }
-            </td>
-            <td>
-                @if (!item.IsRepeat)
-                {
-                    @renderChordsLine(item.SecondBarChords)
-                }
-            </td>
+            @renderMusic(item)
             <td>
                 @foreach (string line in item.TextLines)
                 {
@@ -60,6 +83,7 @@
     <table>
         @foreach (ChordViewModel chordViewModel in Model.Parts
                                                         .SelectMany(p => p.Part.HalfBars)
+                                                        .Where(hb => hb.Chord != null)
                                                         .Select(hb => new ChordViewModel(hb.Chord, hb.ChordOption))
                                                         .Distinct()
                                                         .Where(c => !c.IsSimple))
