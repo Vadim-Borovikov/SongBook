@@ -16,7 +16,7 @@ namespace SongBook.Web.Controllers
 
         [HttpGet]
         [Route("song")]
-        public IActionResult SongView(int id, sbyte? semitones, [FromServices]Manager manager)
+        public IActionResult SongView(int id, sbyte? semitones, bool? showRepeats, [FromServices]Manager manager)
         {
             Song song = manager.Songs[id];
 
@@ -27,7 +27,7 @@ namespace SongBook.Web.Controllers
             }
 
             song.TransposeTo(semitones.Value);
-            var songViewModel = new SongViewModel(song, id);
+            var songViewModel = new SongViewModel(song, id, showRepeats);
             return View(songViewModel);
         }
 
