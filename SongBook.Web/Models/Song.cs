@@ -24,8 +24,7 @@ namespace SongBook.Web.Models
             Author = values.ToString(1);
             _defaultCapo = (byte)(values.ToInt(2) ?? 0);
             Music = values.ToUri(3);
-
-            Tutorials = values.ToString(4)?.Split("\n").Select(s => new Uri(s)).ToList();
+            Tutorials = values.ToUris(4);
         }
 
         internal void Load(Provider provider, string sheetPostfix, Dictionary<string, Chord> chords)
