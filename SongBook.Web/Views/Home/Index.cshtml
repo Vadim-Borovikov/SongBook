@@ -1,8 +1,27 @@
-﻿@model IList<Song>
+﻿@model SongsViewModel
 
-@for (int i = 0; i < Model.Count; ++i)
-{
-    Song song = Model[i];
-    <a href="/song?id=@i">@song.Author — @song.Name</a>
-    <br />
-}
+<a href="/?roll=true">🎸</a>
+<table>
+    @for (int i = 0; i < Model.Songs.Count; ++i)
+    {
+        Song song = Model.Songs[i];
+        <tr>
+            <td>
+                @{
+                    int num = i + 1;
+                    if (num == Model.Data.LastOrderedSongId)
+                    {
+                        <text>♪</text>
+                    }
+                    else if (num == Model.Data.RandomSongId)
+                    {
+                        <text>♫</text>
+                    }
+                }
+            </td>
+            <td>
+                <a href="/song?id=@i">@song.Author — @song.Name</a>
+            </td>
+        </tr>
+    }
+</table>

@@ -20,6 +20,15 @@ namespace SongBook.Web
 
         #endregion // Google
 
+        public static byte GetRandomBytye(byte min, byte max, byte exclude)
+        {
+            int next = Random.Next(min, max - 1);
+            if (next >= exclude)
+            {
+                ++next;
+            }
+            return (byte)next;
+        }
 
         public static void LogException(Exception ex)
         {
@@ -27,5 +36,7 @@ namespace SongBook.Web
         }
 
         private const string ExceptionsLogPath = "errors.txt";
+
+        private static readonly Random Random = new Random();
     }
 }

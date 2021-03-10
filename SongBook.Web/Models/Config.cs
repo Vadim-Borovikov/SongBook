@@ -25,5 +25,8 @@ namespace SongBook.Web.Models
 
         [JsonProperty]
         public string GoogleCredentialJson { get; set; }
+
+        [JsonProperty]
+        public string SavePath { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace SongBook.Web.Models
             }
             _googleSheetProvider =
                 new Provider(_config.GoogleCredentialJson, _config.ApplicationName, _config.GoogleSheetId);
+            _saveManager = new SaveManager<SaveData>(_config.SavePath);
         }
 
         public void Dispose() => _googleSheetProvider?.Dispose();
@@ -29,15 +30,26 @@ namespace SongBook.Web.Models
             _chords = chordsList.ToDictionary(c => c.ToString(), c => c);
 
             Songs = DataManager.GetValues<Song>(_googleSheetProvider, _config.GoogleRangeIndex);
+            _saveManager.Load();
+        }
+
+        internal void Roll()
+        {
+            ++_saveManager.Data.LastOrderedSongId;
+            _saveManager.Data.RandomSongId =
+                Utils.GetRandomBytye(1, (byte)(Songs.Count + 1), _saveManager.Data.LastOrderedSongId);
+            _saveManager.Save();
         }
 
         internal void LoadSong(Song song) => song.Load(_googleSheetProvider, _config.GoogleRangePostfix, _chords);
 
         internal IList<Song> Songs;
+        internal SaveData SaveData => _saveManager.Data;
 
         private Dictionary<string, Chord> _chords;
 
         private readonly Config _config;
         private readonly Provider _googleSheetProvider;
+        private readonly SaveManager<SaveData> _saveManager;
     }
 }

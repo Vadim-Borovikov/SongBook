@@ -8,10 +8,15 @@ namespace SongBook.Web.Controllers
     public sealed class HomeController : Controller
     {
         [HttpGet]
-        public IActionResult Index([FromServices]Manager manager)
+        public IActionResult Index([FromServices]Manager manager, bool? roll)
         {
             manager.LoadIndex();
-            return View(manager.Songs);
+            if (roll.HasValue && roll.Value)
+            {
+                manager.Roll();
+            }
+            var songsViewModel = new SongsViewModel(manager.Songs, manager.SaveData);
+            return View(songsViewModel);
         }
 
         [HttpGet]
