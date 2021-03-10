@@ -26,7 +26,8 @@ namespace SongBook.Web.Models
                 Uri tab = line[0].Tab;
                 if (tab == null)
                 {
-                    List<ChordViewModel> chords = line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
+                    List<ChordViewModel> chords =
+                        line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
                     FirstBarChords.Add(GetChords(chords.Take(2).ToList()));
                     SecondBarChords.Add(GetChords(chords.Skip(2).ToList()));
                 }
