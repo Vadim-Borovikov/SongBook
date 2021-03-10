@@ -47,13 +47,13 @@
         @<text>
             @if (item.IsRepeat && !Model.ShowRepeats)
             {
-                <td colspan="2"/>
+                <td colspan="3"/>
             }
             else
             {
                 if (item.Tabs.Count > 0)
                  {
-                     <td colspan="2">
+                     <td colspan="3">
                          @renderTabs(item.Tabs)
                      </td>
                  }
@@ -64,6 +64,12 @@
                      </td>
                      <td>
                          @renderChordsLine(item.SecondBarChords)
+                     </td>
+                     <td style="font-family: monospace; font-size: 120%">
+                         @foreach (string rythm in item.Rythms)
+                         {
+                             @rythm<br />
+                         }
                      </td>
                  }
             }

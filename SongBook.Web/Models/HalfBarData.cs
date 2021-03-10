@@ -7,6 +7,7 @@ namespace SongBook.Web.Models
     public sealed class HalfBarData : ILoadable
     {
         internal string Part { get; private set; }
+        internal string Rythm { get; private set; }
         internal string Text { get; private set; }
 
         internal Uri Tab { get; private set; }
@@ -22,7 +23,9 @@ namespace SongBook.Web.Models
 
             _initialChordOption = (values.ToInt(2) ?? 1) - 1;
 
-            Text = values.ToString(3);
+            Rythm = values.ToString(3);
+
+            Text = values.ToString(4);
         }
 
         internal void SetChord(string chordKey, Dictionary<string, Chord> chords)

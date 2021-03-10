@@ -15,6 +15,7 @@ namespace SongBook.Web.Models
             Tabs = new List<Uri>();
             FirstBarChords = new List<IList<ChordViewModel>>();
             SecondBarChords = new List<IList<ChordViewModel>>();
+            Rythms = new List<string>();
             TextLines = new List<string>();
 
             bool isCutted = false;
@@ -33,6 +34,9 @@ namespace SongBook.Web.Models
                 {
                     Tabs.Add(tab);
                 }
+
+                string rythm = line.Select(l => l.Rythm).Join("");
+                Rythms.Add(rythm);
 
                 string words = line.Select(l => l.Text).Join("");
                 isCutted = false;
@@ -73,6 +77,7 @@ namespace SongBook.Web.Models
         public readonly IList<IList<ChordViewModel>> FirstBarChords;
         public readonly IList<IList<ChordViewModel>> SecondBarChords;
         public readonly IList<Uri> Tabs;
+        public readonly IList<string> Rythms;
         public readonly IList<string> TextLines;
         public readonly bool IsRepeat;
 
