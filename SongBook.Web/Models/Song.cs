@@ -10,7 +10,8 @@ namespace SongBook.Web.Models
     {
         public string Name { get; private set; }
         public string Author { get; private set; }
-        public string Music { get; private set; }
+        public Uri Music { get; private set; }
+        public List<Uri> Tutorials { get; private set; }
 
         public byte CurrentTune { get; private set; }
         public byte GetCurrentCapo() => Invert(CurrentTune);
@@ -22,7 +23,9 @@ namespace SongBook.Web.Models
             Name = values.ToString(0);
             Author = values.ToString(1);
             _defaultCapo = (byte)(values.ToInt(2) ?? 0);
-            Music = values.ToString(3);
+            Music = values.ToUri(3);
+
+            Tutorials = values.ToString(4)?.Split("\n").Select(s => new Uri(s)).ToList();
         }
 
         internal void Load(Provider provider, string sheetPostfix, Dictionary<string, Chord> chords)
