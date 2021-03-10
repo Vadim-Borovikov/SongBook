@@ -3,6 +3,15 @@
 @{
     ViewData["Title"] = "Home Page";
 
+    <style>
+        h1, h3 {
+            font-family: serif
+        }
+        a, td, text {
+            font-family: sans-serif
+        }
+    </style>
+
     Func<ChordViewModel, object> renderChord = @<a title="@item.Fingering">@item.ToString()</a>;
 
     Func<IList<ChordViewModel>, object> renderChords =
