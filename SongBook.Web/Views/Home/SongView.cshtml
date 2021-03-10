@@ -77,40 +77,44 @@
         <h1 class="display-4">@Model.Song.Name</h1>
         <h3 class="display-4">@Model.Song.Author</h3>
     </div>
-    <table>
-        <tr>
-            <td>
-                Capo: <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune + 1)&showRepeats=@Model.ShowRepeats" class="btn btn-default">–</a> @Model.Song.GetCurrentCapo() <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune - 1)&showRepeats=@Model.ShowRepeats" class="btn btn-default">+</a>
-            </td>
-            <td>
-                Повторы: 
-                <a href="/song?id=@Model.Id&semitones=@Model.Song.CurrentTune&showRepeats=@(!Model.ShowRepeats)">
-                    @if (Model.ShowRepeats)
-                    {
-                        <text>скрыть</text>
-                    }
-                    else
-                    {
-                        <text>показать</text>
-                    }
-                </a>
-            </td>
-        </tr>
-    </table>
-    <table>
-        @foreach (ChordViewModel chordViewModel in Model.Parts
-                                                        .SelectMany(p => p.Part.HalfBars)
-                                                        .Where(hb => hb.Chord != null)
-                                                        .Select(hb => new ChordViewModel(hb.Chord, hb.ChordOption))
-                                                        .Distinct()
-                                                        .Where(c => !c.IsSimple))
-        {
+
+    if (Model.Parts.Any(p => p.Part.HalfBars.Any(hb => hb.Chord != null)))
+    {
+        <table>
             <tr>
-                <td>@chordViewModel.ToString()</td>
-                <td>@chordViewModel.Fingering</td>
+                <td>
+                    Capo: <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune + 1)&showRepeats=@Model.ShowRepeats" class="btn btn-default">–</a> @Model.Song.GetCurrentCapo() <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune - 1)&showRepeats=@Model.ShowRepeats" class="btn btn-default">+</a>
+                </td>
+                <td>
+                    Повторы: 
+                    <a href="/song?id=@Model.Id&semitones=@Model.Song.CurrentTune&showRepeats=@(!Model.ShowRepeats)">
+                        @if (Model.ShowRepeats)
+                        {
+                            <text>скрыть</text>
+                        }
+                        else
+                        {
+                            <text>показать</text>
+                        }
+                    </a>
+                </td>
             </tr>
-        }
-    </table>
+        </table>
+        <table>
+            @foreach (ChordViewModel chordViewModel in Model.Parts
+                                                            .SelectMany(p => p.Part.HalfBars)
+                                                            .Where(hb => hb.Chord != null)
+                                                            .Select(hb => new ChordViewModel(hb.Chord, hb.ChordOption))
+                                                            .Distinct()
+                                                            .Where(c => !c.IsSimple))
+            {
+                <tr>
+                    <td>@chordViewModel.ToString()</td>
+                    <td>@chordViewModel.Fingering</td>
+                </tr>
+            }
+        </table>
+    }
     <table>
         @foreach (PartViewModel part in Model.Parts)
         {
