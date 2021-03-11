@@ -35,7 +35,8 @@ namespace SongBook.Web.Models
 
         internal void Roll()
         {
-            ++_saveManager.Data.LastOrderedSongId;
+            _saveManager.Data.LastOrderedSongId =
+                (byte)(_saveManager.Data.LastOrderedSongId % Songs.Count + 1);
             _saveManager.Data.RandomSongId =
                 Utils.GetRandomBytye(1, (byte)(Songs.Count + 1), _saveManager.Data.LastOrderedSongId);
             _saveManager.Save();
