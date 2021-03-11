@@ -36,7 +36,7 @@ namespace SongBook.Web.Models
 
         internal void InitMusic(Dictionary<string, Chord> chords)
         {
-            if (_music == null)
+            if (string.IsNullOrWhiteSpace(_music))
             {
                 return;
             }
