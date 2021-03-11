@@ -40,13 +40,21 @@
             <br />
         </text>;
 
-    Func<IList<IList<ChordViewModel>>, object> renderChordsLine =
+    Func<IList<IList<ChordViewModel>>, object> renderChordsColumn =
         @<text>
             @foreach (IList<ChordViewModel> chords in item)
             {
                 @renderChords(chords)
             }
         </text>;
+
+    Func<IList<string>, object> renderRythmColumn =
+        @<text>
+            @foreach (string rythm in item)
+            {
+                @rythm<br />
+            }
+         </text>;
 
     Func<IList<Uri>, object> renderTabs =
         @<text>
@@ -60,29 +68,29 @@
         @<text>
             @if (item.IsRepeat && !Model.ShowRepeats)
             {
-                <td colspan="3"/>
+                <td colspan="4"/>
             }
             else
             {
                 if (item.Tabs.Count > 0)
                  {
-                     <td colspan="3">
+                     <td colspan="4">
                          @renderTabs(item.Tabs)
                      </td>
                  }
                  else
                  {
                      <td>
-                         @renderChordsLine(item.FirstBarChords)
+                         @renderChordsColumn(item.FirstBarChords)
                      </td>
                      <td>
-                         @renderChordsLine(item.SecondBarChords)
+                         @renderChordsColumn(item.SecondBarChords)
                      </td>
                      <td class="rythm">
-                         @foreach (string rythm in item.Rythms)
-                         {
-                             @rythm<br />
-                         }
+                         @renderRythmColumn(item.FirstBarRythms)
+                     </td>
+                     <td class="rythm">
+                         @renderRythmColumn(item.SecondBarRythms)
                      </td>
                  }
             }
