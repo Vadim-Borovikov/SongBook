@@ -23,6 +23,12 @@
             font-family: sans-serif;
             vertical-align: top;
         }
+        .tab {
+            height: 75px
+        }
+        .tab:hover {
+            height: 100%
+        }
     </style>
 
     Func<ChordViewModel, object> renderChord = @<a title="@item.Fingering" class="chord">@item.ToString()</a>;
@@ -60,7 +66,7 @@
         @<text>
             @foreach (Uri tab in item)
             {
-                <img src="@tab" height="75" /><br />
+                <img class="tab" src="@tab" /><br />
             }
          </text>;
 
