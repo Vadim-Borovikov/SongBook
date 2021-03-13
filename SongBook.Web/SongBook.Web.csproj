@@ -5,19 +5,16 @@
     <UserSecretsId>367213c6-5665-4bfa-83c6-3c0fd0e28c80</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="save.json" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="GoogleSheetsManager" Version="4.1.0" />
     <PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Content Update="save.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>
