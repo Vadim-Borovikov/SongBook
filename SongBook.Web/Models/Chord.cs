@@ -36,7 +36,8 @@ namespace SongBook.Web.Models
             Fingerings = new List<string>
             {
                 values.ToString(4),
-                values.ToString(5)
+                values.ToString(5),
+                values.ToString(6)
             };
         }
 
