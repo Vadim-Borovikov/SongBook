@@ -20,15 +20,7 @@ namespace SongBook.Web
 
         #endregion // Google
 
-        public static byte GetRandomBytye(byte min, byte max, byte exclude)
-        {
-            int next = Random.Next(min, max - 1);
-            if (next >= exclude)
-            {
-                ++next;
-            }
-            return (byte)next;
-        }
+        public static T GetRandomElement<T>(IList<T> list) => list[Random.Next(list.Count)];
 
         public static void LogException(Exception ex)
         {

@@ -29,8 +29,17 @@ namespace SongBook.Web.Controllers
         }
 
         [HttpGet]
+        [Route("learn")]
+        public IActionResult Learn(byte id, [FromServices]Manager manager)
+        {
+            manager.LoadIndex();
+            manager.Learn(id);
+            return Redirect("/");
+        }
+
+        [HttpGet]
         [Route("song")]
-        public IActionResult SongView(int id, sbyte? semitones, bool? showRepeats, [FromServices]Manager manager)
+        public IActionResult SongView(byte id, sbyte? semitones, bool? showRepeats, [FromServices]Manager manager)
         {
             Song song = manager.Songs[id];
 
