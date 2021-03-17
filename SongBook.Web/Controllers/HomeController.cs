@@ -20,6 +20,15 @@ namespace SongBook.Web.Controllers
         }
 
         [HttpGet]
+        [Route("roll")]
+        public IActionResult Roll([FromServices]Manager manager)
+        {
+            manager.LoadIndex();
+            manager.Roll();
+            return Redirect("/");
+        }
+
+        [HttpGet]
         [Route("song")]
         public IActionResult SongView(int id, sbyte? semitones, bool? showRepeats, [FromServices]Manager manager)
         {
