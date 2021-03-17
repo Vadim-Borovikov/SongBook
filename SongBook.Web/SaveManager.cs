@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SongBook.Web
 {
-    internal class SaveManager<TData>
+    internal sealed class SaveManager<TData>
         where TData: class, new()
     {
         public TData Data { get; private set; }
