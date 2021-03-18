@@ -2,9 +2,9 @@
 
 <a href="/roll">⚂</a>
 <table>
-    @for (byte i = 1; i <= Model.Songs.Count; ++i)
+    @for (byte i = 0; i < Model.Songs.Count; ++i)
     {
-        Song song = Model.Songs[i - 1];
+        Song song = Model.Songs[i];
         <tr>
             <td>
                 @{

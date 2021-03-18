@@ -44,17 +44,17 @@ namespace SongBook.Web.Models
         {
             do
             {
-                _saveManager.Data.LastOrderedSongId = (byte)(_saveManager.Data.LastOrderedSongId % Songs.Count + 1);
+                _saveManager.Data.LastOrderedSongId = (byte)((_saveManager.Data.LastOrderedSongId  + 1) % Songs.Count);
             }
-            while (!Songs[_saveManager.Data.LastOrderedSongId - 1].Learned);
+            while (!Songs[_saveManager.Data.LastOrderedSongId].Learned);
             _saveManager.Save();
         }
 
         private void MarkNextRandomSong()
         {
-            List<byte> songs = Enumerable.Range(1, Songs.Count)
+            List<byte> songs = Enumerable.Range(0, Songs.Count)
                                          .Select(i => (byte)i)
-                                         .Where(i => Songs[i - 1].Learned)
+                                         .Where(i => Songs[i].Learned)
                                          .ToList();
             songs.Remove(_saveManager.Data.LastOrderedSongId);
             songs.Remove(_saveManager.Data.RandomSongId);
