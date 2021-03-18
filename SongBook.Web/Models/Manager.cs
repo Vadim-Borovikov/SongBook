@@ -40,29 +40,25 @@ namespace SongBook.Web.Models
             _saveManager.Save();
         }
 
-        internal void Learn(byte id)
-        {
-            _saveManager.Data.LearningSongId = id;
-            _saveManager.Save();
-        }
-
-        private void MarkNextRandomSong()
-        {
-            List<byte> songs = Enumerable.Range(1, Songs.Count).Select(i => (byte)i).ToList();
-            songs.Remove(_saveManager.Data.LearningSongId);
-            songs.Remove(_saveManager.Data.LastOrderedSongId);
-            songs.Remove(_saveManager.Data.RandomSongId);
-            _saveManager.Data.RandomSongId = Utils.GetRandomElement(songs);
-        }
-
         private void MarkNextOrderedSong()
         {
             do
             {
                 _saveManager.Data.LastOrderedSongId = (byte)(_saveManager.Data.LastOrderedSongId % Songs.Count + 1);
             }
-            while (_saveManager.Data.LastOrderedSongId == _saveManager.Data.LearningSongId);
+            while (!Songs[_saveManager.Data.LastOrderedSongId - 1].Learned);
             _saveManager.Save();
+        }
+
+        private void MarkNextRandomSong()
+        {
+            List<byte> songs = Enumerable.Range(1, Songs.Count)
+                                         .Select(i => (byte)i)
+                                         .Where(i => Songs[i - 1].Learned)
+                                         .ToList();
+            songs.Remove(_saveManager.Data.LastOrderedSongId);
+            songs.Remove(_saveManager.Data.RandomSongId);
+            _saveManager.Data.RandomSongId = Utils.GetRandomElement(songs);
         }
 
         internal void LoadSong(Song song) => song.Load(_googleSheetProvider, _config.GoogleRangePostfix, _chords);

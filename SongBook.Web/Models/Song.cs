@@ -8,6 +8,7 @@ namespace SongBook.Web.Models
 {
     public sealed class Song : ILoadable
     {
+        public bool Learned { get; private set; }
         public string Name { get; private set; }
         public string Author { get; private set; }
         public Uri Music { get; private set; }
@@ -20,11 +21,12 @@ namespace SongBook.Web.Models
 
         public void Load(IList<object> values)
         {
-            Name = values.ToString(0);
-            Author = values.ToString(1);
-            _defaultCapo = (byte)(values.ToInt(2) ?? 0);
-            Music = values.ToUri(3);
-            Tutorials = values.ToUris(4);
+            Learned = values.ToBool(0) ?? false;
+            Name = values.ToString(1);
+            Author = values.ToString(2);
+            _defaultCapo = (byte)(values.ToInt(3) ?? 0);
+            Music = values.ToUri(4);
+            Tutorials = values.ToUris(5);
         }
 
         internal void Load(Provider provider, string sheetPostfix, Dictionary<string, Chord> chords)
