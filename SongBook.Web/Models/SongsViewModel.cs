@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SongBook.Web.Models
 {
@@ -8,9 +9,11 @@ namespace SongBook.Web.Models
         {
             Songs = songs;
             Data = data;
+            FirstSongToLearn = songs.FirstOrDefault(s => s.Ready && !s.Learned);
         }
 
         public readonly IList<Song> Songs;
         public readonly SaveData Data;
+        public readonly Song FirstSongToLearn;
     }
 }

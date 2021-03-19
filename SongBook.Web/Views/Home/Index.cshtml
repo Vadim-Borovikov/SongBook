@@ -1,5 +1,20 @@
 ﻿@model SongsViewModel
 
+<style>
+    a:link {
+        text-decoration: none;
+    }
+    .inProgress {
+        color: lightgray;
+    }
+    .ready {
+        color: darkgray
+    }
+    .learned {
+        color: blue
+    }
+</style>
+
 <a href="/roll">⚂</a>
 <table>
     @for (byte i = 0; i < Model.Songs.Count; ++i)
@@ -8,7 +23,7 @@
         <tr>
             <td>
                 @{
-                    if (!song.Learned)
+                    if (song == Model.FirstSongToLearn)
                     {
                         <text>♮</text>
                     }
@@ -23,7 +38,10 @@
                 }
             </td>
             <td>
-                <a href="/song?id=@i">@song.Author — @song.Name</a>
+                @{
+                    string songClass = song.Learned ? "learned" : (song.Ready ? "ready" : "inProgress");
+                }
+                <a href="/song?id=@i" class=@songClass>@song.Author — @song.Name</a>
             </td>
         </tr>
     }
