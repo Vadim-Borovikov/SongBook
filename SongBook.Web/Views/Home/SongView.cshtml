@@ -4,6 +4,9 @@
     ViewData["Title"] = "Home Page";
 
     <style>
+        .fixedSize {
+            white-space: nowrap
+        }
         .control, .chord {
             font-family: sans-serif
         }
@@ -155,7 +158,7 @@
             }
         </table>
     }
-    <table>
+    <table class="fixedSize">
         @foreach (PartViewModel part in Model.Parts)
         {
             @renderPart(part)
