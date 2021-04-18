@@ -46,7 +46,7 @@ namespace SongBook.Web.Models
                 if (!string.IsNullOrWhiteSpace(words))
                 {
                     isCutted = !words.EndsWith(' ');
-                    if (isCutted)
+                    if (isCutted && !words.EndsWith('-'))
                     {
                         words = $"{words}-";
                     }
