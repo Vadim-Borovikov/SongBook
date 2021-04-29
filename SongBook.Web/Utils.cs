@@ -20,7 +20,21 @@ namespace SongBook.Web
 
         #endregion // Google
 
-        public static T GetRandomElement<T>(IList<T> list) => list[Random.Next(list.Count)];
+        public static int GetRandomElementWeighted(List<int> weights)
+        {
+            int totalWeight = weights.Sum();
+            int roll = Random.Next(totalWeight);
+            int currentWeight = 0;
+            for (int i = 0; i < weights.Count; ++i)
+            {
+                currentWeight += weights[i];
+                if (roll < currentWeight)
+                {
+                    return i;
+                }
+            }
+            throw new Exception("Failed to get random element");
+        }
 
         public static void LogException(Exception ex)
         {
