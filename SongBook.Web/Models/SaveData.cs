@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SongBook.Web.Models
 {
     public sealed class SaveData
     {
-        public byte LastOrderedSongId;
-        public byte RandomSongId;
+        [JsonProperty]
+        public byte LastOrderedSongId { get; set; }
+        [JsonProperty]
+        public byte RandomSongId { get; set; }
 
-        internal readonly Dictionary<byte, DateTime> LastPlayed;
+        [JsonProperty]
+        public Dictionary<byte, DateTime> LastPlayed { get; set; }
 
         public SaveData() => LastPlayed = new Dictionary<byte, DateTime>();
     }
