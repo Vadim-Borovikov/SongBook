@@ -12,8 +12,8 @@ namespace SongBook.Web.Models
         public byte RandomSongId { get; set; }
 
         [JsonProperty]
-        public Dictionary<byte, DateTime> LastPlayed { get; set; }
+        public HashSet<byte> AlsoPlayedYesterday { get; set; }
 
-        public SaveData() => LastPlayed = new Dictionary<byte, DateTime>();
+        public SaveData() => AlsoPlayedYesterday = new HashSet<byte>();
     }
 }

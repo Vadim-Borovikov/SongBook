@@ -35,59 +35,66 @@ namespace SongBook.Web.Models
 
         internal void Roll()
         {
-            MarkNextOrderedSong();
-            MarkFirstSongToLearn();
-            MarkNextRandomSong();
+            var yesterdaySongs = new HashSet<byte>
+            {
+                _saveManager.Data.LastOrderedSongId,
+                _saveManager.Data.RandomSongId
+            };
+            yesterdaySongs.UnionWith(_saveManager.Data.AlsoPlayedYesterday);
+            _saveManager.Data.AlsoPlayedYesterday = new HashSet<byte>();
+
+            _saveManager.Data.LastOrderedSongId = GetNextOrderedSong();
+            var todaySongs = new HashSet<byte>
+            {
+                _saveManager.Data.LastOrderedSongId
+            };
+
+            byte? firstSongToLearn = GetFirstSongToLearn();
+            if (firstSongToLearn.HasValue)
+            {
+                todaySongs.Add(firstSongToLearn.Value);
+                _saveManager.Data.AlsoPlayedYesterday.Add(firstSongToLearn.Value);
+            }
+
+            byte tomorrowSong = GetNextOrderedSong();
+
+            var excluded = new HashSet<byte>(yesterdaySongs);
+            excluded.UnionWith(todaySongs);
+            excluded.Add(tomorrowSong);
+
+            _saveManager.Data.RandomSongId = GetNextRandomSong(excluded);
+
+            todaySongs.Add(_saveManager.Data.RandomSongId);
 
             _saveManager.Save();
         }
 
-        private void MarkNextOrderedSong()
+        private byte GetNextOrderedSong() => GetNextOrderedSong(_saveManager.Data.LastOrderedSongId);
+        private byte GetNextOrderedSong(byte current)
         {
+            byte next = current;
             do
             {
-                _saveManager.Data.LastOrderedSongId = (byte)((_saveManager.Data.LastOrderedSongId  + 1) % Songs.Count);
+                next = (byte)((next + 1) % Songs.Count);
             }
-            while (!Songs[_saveManager.Data.LastOrderedSongId].Learned);
-            _saveManager.Data.LastPlayed[_saveManager.Data.LastOrderedSongId] = DateTime.Today;
+            while (!Songs[next].Learned);
+            return next;
         }
 
-        private void MarkFirstSongToLearn()
+        private byte? GetFirstSongToLearn()
         {
             Song first = Songs.FirstOrDefault(s => s.Ready && !s.Learned);
-            if (first != null)
-            {
-                _saveManager.Data.LastPlayed[(byte)Songs.IndexOf(first)] = DateTime.Today;
-            }
+            return first == null ? null : (byte?)Songs.IndexOf(first);
         }
 
-        private void MarkNextRandomSong()
+        private byte GetNextRandomSong(IEnumerable<byte> excluded)
         {
-            var weights = new Dictionary<byte, int>();
-
-            foreach (byte id in _saveManager.Data.LastPlayed.Keys)
-            {
-                int daysSincePlayed = (int)(DateTime.Today - _saveManager.Data.LastPlayed[id]).TotalDays;
-                weights[id] = Math.Max(0, daysSincePlayed - 1);
-            }
-
-            int max = weights.Values.Max();
-
-            for (byte id = 0; id < Songs.Count; ++id)
-            {
-                if (!Songs[id].Ready || !Songs[id].Learned)
-                {
-                    weights[id] = 0;
-                }
-                else if (!weights.ContainsKey(id))
-                {
-                    weights[id] = max + 1;
-                }
-            }
-
-            _saveManager.Data.RandomSongId =
-                (byte) Utils.GetRandomElementWeighted(weights.OrderBy(p => p.Key).Select(p => p.Value).ToList());
-            _saveManager.Data.LastPlayed[_saveManager.Data.RandomSongId] = DateTime.Today;
+            List<byte> songs = Enumerable.Range(0, Songs.Count)
+                                         .Where(i => Songs[i].Learned)
+                                         .Select(i => (byte)i)
+                                         .Except(excluded)
+                                         .ToList();
+            return Utils.GetRandomElement(songs);
         }
 
         internal void LoadSong(Song song) => song.Load(_googleSheetProvider, _config.GoogleRangePostfix, _chords);
