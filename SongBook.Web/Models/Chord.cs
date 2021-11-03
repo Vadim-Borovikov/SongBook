@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GoogleSheetsManager;
 using Microsoft.EntityFrameworkCore.Internal;
 
@@ -65,6 +66,10 @@ namespace SongBook.Web.Models
 
         private static string Transpose(string semitone, sbyte semitones)
         {
+            if (!Semitones.Contains(semitone))
+            {
+                return semitone;
+            }
             int index = (Semitones.Length + Semitones.IndexOf(semitone) + semitones) % Semitones.Length;
             return Semitones[index];
         }
