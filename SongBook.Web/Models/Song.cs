@@ -86,6 +86,32 @@ namespace SongBook.Web.Models
             }
         }
 
+        internal Tune GetEasiestTune()
+        {
+            Tune current = CurrentTune;
+
+            Tune? best = null;
+            uint? minBarres = null;
+            for (byte value = 0; value < Tune.Limit; ++value)
+            {
+                var tune = new Tune(value);
+                TransposeTo(tune);
+                uint barres = CountBarres();
+                if (!minBarres.HasValue || (barres < minBarres))
+                {
+                    minBarres = barres;
+                    best = tune;
+                }
+            }
+
+            TransposeTo(current);
+
+            // ReSharper disable once PossibleInvalidOperationException
+            return best.Value;
+        }
+
+        internal uint CountBarres() => (uint)Parts.SelectMany(p => p.HalfBars).Count(h => h.HasBarre());
+
         private Dictionary<string, Chord> _chords;
     }
 }

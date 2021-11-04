@@ -24,6 +24,13 @@ namespace SongBook.Web.Models
 
         public byte GetCurrentCapo() => Song.CurrentTune.Invert().Value;
 
+        public float GetCurrentBarresPercent()
+        {
+            uint current = Song.CountBarres();
+            int max = Song.Parts.SelectMany(p => p.HalfBars).Count();
+            return current * 1.0f / max;
+        }
+
         public readonly Song Song;
         public readonly int Id;
         public readonly bool ShowRepeats;

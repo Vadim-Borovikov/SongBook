@@ -30,10 +30,15 @@ namespace SongBook.Web.Controllers
 
         [HttpGet]
         [Route("song")]
-        public IActionResult SongView(byte id, sbyte? delta, bool? showRepeats, [FromServices]Manager manager)
+        public IActionResult SongView(byte id, sbyte? delta, bool? showRepeats, bool? autotune, [FromServices]Manager manager)
         {
             Song song = manager.Songs[id];
-            if (delta.HasValue)
+            if (autotune == true)
+            {
+                Tune easiest = song.GetEasiestTune();
+                song.TransposeTo(easiest);
+            }
+            else if (delta.HasValue)
             {
                 song.TransposeBy(delta.Value);
             }

@@ -23,7 +23,7 @@ namespace SongBook.Web.Models
             "G#"
         };
 
-        internal List<string> Fingerings;
+        internal List<Fingering> Fingerings;
         internal bool IsSimple;
 
         public Chord() { }
@@ -34,11 +34,11 @@ namespace SongBook.Web.Models
             _postfix = values.ToString(1);
             _bass = values.ToString(2);
             IsSimple = values.ToBool(3) ?? false;
-            Fingerings = new List<string>
+            Fingerings = new List<Fingering>
             {
-                values.ToString(4),
-                values.ToString(5),
-                values.ToString(6)
+                new Fingering(values.ToString(4)),
+                new Fingering(values.ToString(5)),
+                new Fingering(values.ToString(6)),
             };
         }
 
@@ -55,7 +55,7 @@ namespace SongBook.Web.Models
             return transposed.ToString();
         }
 
-        private Chord(string semitone, string postfix, string bass, List<string> fingerings, bool isSimple)
+        private Chord(string semitone, string postfix, string bass, List<Fingering> fingerings, bool isSimple)
         {
             _semitone = semitone;
             _postfix = postfix;

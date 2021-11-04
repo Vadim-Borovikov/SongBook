@@ -15,6 +15,8 @@ namespace SongBook.Web.Models
         public Chord Chord { get; private set; }
         public int ChordOption { get; private set; }
 
+        internal bool HasBarre() => (Chord != null) && Chord.Fingerings[ChordOption].HasBarre();
+
         public void Load(IList<object> values)
         {
             Part = values.ToString(0);
@@ -44,9 +46,7 @@ namespace SongBook.Web.Models
             if (chords.ContainsKey(_music))
             {
                 Chord = chords[_music];
-                ChordOption = string.IsNullOrWhiteSpace(Chord.Fingerings[_initialChordOption])
-                    ? 0
-                    : _initialChordOption;
+                ChordOption = Chord.Fingerings[_initialChordOption].IsPresent ? 0 : _initialChordOption;
             }
             else
             {

@@ -4,7 +4,7 @@ namespace SongBook.Web.Models
 {
     public sealed class ChordViewModel : IEquatable<ChordViewModel>
     {
-        public string Fingering => _chord?.Fingerings[_option];
+        public Fingering Fingering => _chord?.Fingerings[_option];
         public bool IsSimple => (_chord == null) || (_chord.IsSimple && (_option == 0));
 
         public ChordViewModel(Chord chord, int option)
