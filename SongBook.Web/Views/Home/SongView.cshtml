@@ -126,7 +126,7 @@
         <table class="control">
             <tr>
                 <td>
-                    Capo: <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune + 1)&showRepeats=@Model.ShowRepeats" class="btn btn-default">–</a> @Model.Song.GetCurrentCapo() <a href="/song?id=@Model.Id&semitones=@(Model.Song.CurrentTune - 1)&showRepeats=@Model.ShowRepeats" class="btn btn-default">+</a>
+                    Capo: <a href="/song?id=@Model.Id&delta=1&showRepeats=@Model.ShowRepeats" class="btn btn-default">–</a> @Model.GetCurrentCapo() <a href="/song?id=@Model.Id&delta=-1&showRepeats=@Model.ShowRepeats" class="btn btn-default">+</a>
                 </td>
                 <td>
                     Повторы: 

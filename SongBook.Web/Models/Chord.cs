@@ -47,10 +47,10 @@ namespace SongBook.Web.Models
             return _bass == _semitone ? $"{_semitone}{_postfix}" : $"{_semitone}{_postfix}/{_bass}";
         }
 
-        internal string Transpose(sbyte semitones)
+        internal string TransposeBy(sbyte delta)
         {
-            string semitone = Transpose(_semitone, semitones);
-            string bass = Transpose(_bass, semitones);
+            string semitone = TransposeBy(_semitone, delta);
+            string bass = TransposeBy(_bass, delta);
             var transposed = new Chord(semitone, _postfix, bass, Fingerings, IsSimple);
             return transposed.ToString();
         }
@@ -64,14 +64,15 @@ namespace SongBook.Web.Models
             IsSimple = isSimple;
         }
 
-        private static string Transpose(string semitone, sbyte semitones)
+        private static string TransposeBy(string semitone, sbyte delta)
         {
             if (!Semitones.Contains(semitone))
             {
                 return semitone;
             }
-            int index = (Semitones.Length + Semitones.IndexOf(semitone) + semitones) % Semitones.Length;
-            return Semitones[index];
+            var tune = new Tune((byte) Semitones.IndexOf(semitone));
+            tune += delta;
+            return Semitones[tune.Value];
         }
 
         private string _semitone;

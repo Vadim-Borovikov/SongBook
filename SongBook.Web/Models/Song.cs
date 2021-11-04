@@ -15,8 +15,8 @@ namespace SongBook.Web.Models
         public Uri Music { get; private set; }
         public List<Uri> Tutorials { get; private set; }
 
-        public byte CurrentTune { get; private set; }
-        public byte GetCurrentCapo() => Invert(CurrentTune);
+        internal Tune DefaultTune { get; private set; }
+        public Tune CurrentTune { get; private set; }
 
         internal IReadOnlyList<Part> Parts;
 
@@ -26,9 +26,12 @@ namespace SongBook.Web.Models
             Learned = values.ToBool(1) ?? false;
             Name = values.ToString(2);
             Author = values.ToString(3);
-            _defaultCapo = (byte)(values.ToInt(4) ?? 0);
             Music = values.ToUri(5);
             Tutorials = values.ToUris(6);
+
+            var defaultCapo = new Tune(values.ToByte(4) ?? 0);
+            DefaultTune = defaultCapo.Invert();
+            CurrentTune = new Tune(0);
         }
 
         internal void Load(Provider provider, string sheetPostfix, Dictionary<string, Chord> chords)
@@ -66,28 +69,23 @@ namespace SongBook.Web.Models
             Parts = parts;
         }
 
-        internal byte GetDefaultTune() => Invert(_defaultCapo);
+        internal void TransposeTo(Tune tune) => TransposeBy(tune - CurrentTune);
 
-        internal void TransposeTo(sbyte semitones) => Transpose((sbyte)(semitones - CurrentTune));
-
-        private void Transpose(sbyte semitones)
+        internal void TransposeBy(sbyte delta)
         {
-            if (semitones == 0)
+            if (delta == 0)
             {
                 return;
             }
 
-            CurrentTune = (byte)((Chord.Semitones.Length + CurrentTune + semitones) % Chord.Semitones.Length);
+            CurrentTune += delta;
             foreach (HalfBarData halfBarData in Parts.SelectMany(p => p.HalfBars).Where(h => h.Chord != null))
             {
-                string chordKey = halfBarData.Chord.Transpose(semitones);
+                string chordKey = halfBarData.Chord.TransposeBy(delta);
                 halfBarData.SetChord(chordKey, _chords);
             }
         }
 
-        private static byte Invert(byte tune) => (byte)((Chord.Semitones.Length - tune) % Chord.Semitones.Length);
-
-        private byte _defaultCapo;
         private Dictionary<string, Chord> _chords;
     }
 }

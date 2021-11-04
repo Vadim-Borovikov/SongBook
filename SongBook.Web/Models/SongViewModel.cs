@@ -22,6 +22,8 @@ namespace SongBook.Web.Models
             }
         }
 
+        public byte GetCurrentCapo() => Song.CurrentTune.Invert().Value;
+
         public readonly Song Song;
         public readonly int Id;
         public readonly bool ShowRepeats;

@@ -11,8 +11,10 @@ namespace SongBook.Web
         #region Google
 
         public static List<Uri> ToUris(this IList<object> values, int index) => values.To(index, ToUris);
+        public static byte? ToByte(this IList<object> values, int index) => values.To(index, ToByte);
 
         private static List<Uri> ToUris(object o) => o?.ToString().Split("\n").Select(s => new Uri(s)).ToList();
+        private static byte? ToByte(object o) => byte.TryParse(o?.ToString(), out byte i) ? (byte?)i : null;
 
         #endregion // Google
 
