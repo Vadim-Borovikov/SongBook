@@ -27,7 +27,7 @@ namespace SongBook.Web.Models
 
             Rythm = valueSet[RythmTitle]?.ToString();
 
-            Text = valueSet[TextTitle]?.ToString();
+            Text = valueSet.ContainsKey(TextTitle) ? valueSet[TextTitle]?.ToString() : null;
         }
 
         internal void SetChord(string chordKey, Dictionary<string, Chord> chords)
