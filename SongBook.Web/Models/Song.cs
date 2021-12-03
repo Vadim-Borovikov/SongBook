@@ -39,7 +39,8 @@ namespace SongBook.Web.Models
         {
             _chords = chords;
 
-            IList<HalfBarData> halfBars = await DataManager.GetValuesAsync<HalfBarData>(provider, $"{Name}{sheetPostfix}");
+            IList<HalfBarData> halfBars =
+                await DataManager.GetValuesAsync<HalfBarData>(provider, $"{Name}{sheetPostfix}", true);
             var parts = new List<Part>();
             Part currentPart = null;
             foreach (HalfBarData halfBarData in halfBars)
