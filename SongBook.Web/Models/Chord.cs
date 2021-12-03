@@ -28,17 +28,17 @@ namespace SongBook.Web.Models
 
         public Chord() { }
 
-        public void Load(IList<object> values)
+        public void Load(IDictionary<string, object> valueSet)
         {
-            _semitone = values.ToString(0);
-            _postfix = values.ToString(1);
-            _bass = values.ToString(2);
-            IsSimple = values.ToBool(3) ?? false;
+            _semitone = valueSet[SemitoneTitle]?.ToString();
+            _postfix = valueSet[PostfixTitle]?.ToString();
+            _bass = valueSet[BassTitle]?.ToString();
+            IsSimple = valueSet[IsSimpleTitle]?.ToBool() ?? false;
             Fingerings = new List<Fingering>
             {
-                new Fingering(values.ToString(4)),
-                new Fingering(values.ToString(5)),
-                new Fingering(values.ToString(6)),
+                new Fingering(valueSet[Fingerings1Title]?.ToString()),
+                new Fingering(valueSet[Fingerings2Title]?.ToString()),
+                new Fingering(valueSet[Fingerings3Title]?.ToString())
             };
         }
 
@@ -74,6 +74,14 @@ namespace SongBook.Web.Models
             tune += delta;
             return Semitones[tune.Value];
         }
+
+        private const string SemitoneTitle = "Полутон";
+        private const string PostfixTitle = "Вариация";
+        private const string BassTitle = "Бас";
+        private const string IsSimpleTitle = "Простой";
+        private const string Fingerings1Title = "Аппликатура 1";
+        private const string Fingerings2Title = "Аппликатура 2";
+        private const string Fingerings3Title = "Аппликатура 3";
 
         private string _semitone;
         private string _postfix;

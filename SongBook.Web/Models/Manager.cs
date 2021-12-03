@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GoogleSheetsManager;
+using GoogleSheetsManager.Providers;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -18,18 +20,18 @@ namespace SongBook.Web.Models
                 _config.GoogleCredentialJson = JsonConvert.SerializeObject(_config.GoogleCredential);
             }
             _googleSheetProvider =
-                new Provider(_config.GoogleCredentialJson, _config.ApplicationName, _config.GoogleSheetId);
+                new SheetsProvider(_config.GoogleCredentialJson, _config.ApplicationName, _config.GoogleSheetId);
             _saveManager = new SaveManager<SaveData>(_config.SavePath);
         }
 
         public void Dispose() => _googleSheetProvider?.Dispose();
 
-        internal void LoadIndex()
+        internal async Task LoadIndexAsync()
         {
-            IList<Chord> chordsList = DataManager.GetValues<Chord>(_googleSheetProvider, _config.GoogleRangeChords);
+            IList<Chord> chordsList = await DataManager.GetValuesAsync<Chord>(_googleSheetProvider, _config.GoogleRangeChords);
             _chords = chordsList.ToDictionary(c => c.ToString(), c => c);
 
-            Songs = DataManager.GetValues<Song>(_googleSheetProvider, _config.GoogleRangeIndex);
+            Songs = await DataManager.GetValuesAsync<Song>(_googleSheetProvider, _config.GoogleRangeIndex);
             _saveManager.Load();
         }
 
@@ -97,7 +99,7 @@ namespace SongBook.Web.Models
             return Utils.GetRandomElement(songs);
         }
 
-        internal void LoadSong(Song song) => song.Load(_googleSheetProvider, _config.GoogleRangePostfix, _chords);
+        internal Task LoadSongAsync(Song song) => song.LoadAsync(_googleSheetProvider, _config.GoogleRangePostfix, _chords);
 
         internal IList<Song> Songs;
         internal SaveData SaveData => _saveManager.Data;
@@ -105,7 +107,7 @@ namespace SongBook.Web.Models
         private Dictionary<string, Chord> _chords;
 
         private readonly Config _config;
-        private readonly Provider _googleSheetProvider;
+        private readonly SheetsProvider _googleSheetProvider;
         private readonly SaveManager<SaveData> _saveManager;
     }
 }

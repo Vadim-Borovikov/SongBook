@@ -17,17 +17,17 @@ namespace SongBook.Web.Models
 
         internal bool HasBarre() => (Chord != null) && Chord.Fingerings[ChordOption].HasBarre();
 
-        public void Load(IList<object> values)
+        public void Load(IDictionary<string, object> valueSet)
         {
-            Part = values.ToString(0);
+            Part = valueSet[PartTitle]?.ToString();
 
-            _music = values.ToString(1);
+            _music = valueSet[MusicTitle]?.ToString();
 
-            _initialChordOption = (values.ToInt(2) ?? 1) - 1;
+            _initialChordOption = (valueSet[InitialChordOptionTitle]?.ToInt() ?? 1) - 1;
 
-            Rythm = values.ToString(3);
+            Rythm = valueSet[RythmTitle]?.ToString();
 
-            Text = values.ToString(4);
+            Text = valueSet[TextTitle]?.ToString();
         }
 
         internal void SetChord(string chordKey, Dictionary<string, Chord> chords)
@@ -55,6 +55,12 @@ namespace SongBook.Web.Models
                 Tab = new Uri(tabUrl);
             }
         }
+
+        private const string PartTitle = "Часть";
+        private const string MusicTitle = "Аккорд";
+        private const string InitialChordOptionTitle = "Вариант";
+        private const string RythmTitle = "Ритм";
+        private const string TextTitle = "Текст";
 
         private const string TabPrefix = "=IMAGE(\"";
         private const string TabPostfix = "\")";

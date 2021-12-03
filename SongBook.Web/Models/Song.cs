@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Google.Apis.Sheets.v4;
+using System.Threading.Tasks;
 using GoogleSheetsManager;
+using GoogleSheetsManager.Providers;
 
 namespace SongBook.Web.Models
 {
@@ -20,26 +21,25 @@ namespace SongBook.Web.Models
 
         internal IReadOnlyList<Part> Parts;
 
-        public void Load(IList<object> values)
+        public void Load(IDictionary<string, object> valueSet)
         {
-            Ready = values.ToBool(0) ?? false;
-            Learned = values.ToBool(1) ?? false;
-            Name = values.ToString(2);
-            Author = values.ToString(3);
-            Music = values.ToUri(5);
-            Tutorials = values.ToUris(6);
+            Ready = valueSet[ReadyTitle]?.ToBool() ?? false;
+            Learned = valueSet[LearnedTitle]?.ToBool() ?? false;
+            Name = valueSet[NameTitle]?.ToString();
+            Author = valueSet[AuthorTitle]?.ToString();
+            Music = valueSet[MusicTitle]?.ToUri();
+            Tutorials = valueSet[TutorialsTitle]?.ToUris();
 
-            var defaultCapo = new Tune(values.ToByte(4) ?? 0);
+            var defaultCapo = new Tune(valueSet[DefaultCapoTitle]?.ToByte() ?? 0);
             DefaultTune = defaultCapo.Invert();
             CurrentTune = new Tune(0);
         }
 
-        internal void Load(Provider provider, string sheetPostfix, Dictionary<string, Chord> chords)
+        internal async Task LoadAsync(SheetsProvider provider, string sheetPostfix, Dictionary<string, Chord> chords)
         {
             _chords = chords;
 
-            IList<HalfBarData> halfBars = DataManager.GetValues<HalfBarData>(provider, $"{Name}{sheetPostfix}",
-                SpreadsheetsResource.ValuesResource.GetRequest.ValueRenderOptionEnum.FORMULA);
+            IList<HalfBarData> halfBars = await DataManager.GetValuesAsync<HalfBarData>(provider, $"{Name}{sheetPostfix}");
             var parts = new List<Part>();
             Part currentPart = null;
             foreach (HalfBarData halfBarData in halfBars)
@@ -111,6 +111,14 @@ namespace SongBook.Web.Models
         }
 
         internal uint CountBarres() => (uint)Parts.SelectMany(p => p.HalfBars).Count(h => h.HasBarre());
+
+        private const string ReadyTitle = "Готова";
+        private const string LearnedTitle = "Выучена";
+        private const string NameTitle = "Название";
+        private const string AuthorTitle = "Автор";
+        private const string DefaultCapoTitle = "Каподастр";
+        private const string MusicTitle = "Музыка";
+        private const string TutorialsTitle = "Разбор";
 
         private Dictionary<string, Chord> _chords;
     }

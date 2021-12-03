@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SongBook.Web.Models;
 
@@ -8,9 +9,9 @@ namespace SongBook.Web.Controllers
     public sealed class HomeController : Controller
     {
         [HttpGet]
-        public IActionResult Index([FromServices]Manager manager, bool? roll)
+        public async Task<IActionResult> Index([FromServices]Manager manager, bool? roll)
         {
-            manager.LoadIndex();
+            await manager.LoadIndexAsync();
             if (roll.HasValue && roll.Value)
             {
                 manager.Roll();
@@ -21,16 +22,16 @@ namespace SongBook.Web.Controllers
 
         [HttpGet]
         [Route("roll")]
-        public IActionResult Roll([FromServices]Manager manager)
+        public async Task<IActionResult> Roll([FromServices]Manager manager)
         {
-            manager.LoadIndex();
+            await manager.LoadIndexAsync();
             manager.Roll();
             return Redirect("/");
         }
 
         [HttpGet]
         [Route("song")]
-        public IActionResult SongView(byte id, sbyte? delta, bool? showRepeats, bool? autotune, [FromServices]Manager manager)
+        public async Task<IActionResult> SongView(byte id, sbyte? delta, bool? showRepeats, bool? autotune, [FromServices]Manager manager)
         {
             Song song = manager.Songs[id];
             if (autotune == true)
@@ -44,7 +45,7 @@ namespace SongBook.Web.Controllers
             }
             else
             {
-                manager.LoadSong(song);
+                await manager.LoadSongAsync(song);
                 song.TransposeTo(song.DefaultTune);
             }
             var songViewModel = new SongViewModel(song, id, showRepeats);
