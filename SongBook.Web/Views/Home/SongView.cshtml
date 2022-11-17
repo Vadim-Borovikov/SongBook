@@ -41,88 +41,99 @@
         }
     </style>
 
-    Func<ChordViewModel, object> renderChord = @<a title="@item.Fingering" class="chord">@item.ToString()</a>;
+    void RenderChord(ChordViewModel chord){<a title="@chord.Fingering" class="chord">@chord</a>}
 
-    Func<IList<ChordViewModel>, object> renderChords =
-        @<text>
-            @if (item.Count == 1)
-            {
-                @renderChord(item[0])
-            }
-            else
-            {
-                @renderChord(item[0])@:-@renderChord(item[1])
-            }
-            <br />
-        </text>;
+    void RenderChords(IList<ChordViewModel> chords)
+    {
+        if (chords.Count == 1)
+        {
+            RenderChord(chords[0]);
+        }
+        else
+        {
+            RenderChord(chords[0]);@:-@{RenderChord(chords[1]);}
+        }
+        <br />
+    }
 
-    Func<IList<IList<ChordViewModel>>, object> renderChordsColumn =
-        @<text>
-            @foreach (IList<ChordViewModel> chords in item)
-            {
-                @renderChords(chords)
-            }
-        </text>;
+    void RenderChordsColumn(IEnumerable<IList<ChordViewModel>> chordsColumn)
+    {
+        foreach (IList<ChordViewModel> chords in chordsColumn)
+        {
+            RenderChords(chords);
+        }
+    }
 
-    Func<IList<string>, object> renderRythmColumn =
-        @<text>
-            @foreach (string rythm in item)
-            {
-                @rythm<br />
-            }
-         </text>;
+    void RenderRythmColumn(IEnumerable<string> rythms)
+    {
+        foreach (string rythm in rythms)
+        {
+            @rythm<br />
+        }
+    }
 
-    Func<IList<Uri>, object> renderTabs =
-        @<text>
-            @foreach (Uri tab in item)
-            {
-                <img class="tab" src="@tab" /><br />
-            }
-         </text>;
+    void RenderTabs(IEnumerable<Uri> tabs)
+    {
+        foreach (Uri tab in tabs)
+        {
+            <img class="tab" src="@tab" /><br />
+        }
+    }
 
-    Func<PartViewModel, object> renderMusic =
-        @<text>
-            @if (item.IsRepeat && !Model.ShowRepeats)
-            {
-                <td colspan="4"/>
-            }
-            else
-            {
-                if (item.Tabs.Count > 0)
-                 {
-                     <td colspan="4">
-                         @renderTabs(item.Tabs)
-                     </td>
-                 }
-                 else
-                 {
-                     <td>
-                         @renderChordsColumn(item.FirstBarChords)
-                     </td>
-                     <td>
-                         @renderChordsColumn(item.SecondBarChords)
-                     </td>
-                     <td class="rythm">
-                         @renderRythmColumn(item.FirstBarRythms)
-                     </td>
-                     <td class="rythm">
-                         @renderRythmColumn(item.SecondBarRythms)
-                     </td>
-                 }
-            }
-         </text>;
-
-    Func<PartViewModel, object> renderPart =
-        @<tr>
-            <td class="part">@item.Part.Name</td>
-            @renderMusic(item)
+    void RenderMusic(PartViewModel part)
+    {
+        if (part.IsRepeat && !Model.ShowRepeats)
+        {
+            <td colspan="4"/>
+        }
+        else if (part.Tabs.Count > 0)
+        {
+            <td colspan="4">
+                @{
+                    RenderTabs(part.Tabs);
+                }
+            </td>
+        }
+        else
+        {
             <td>
-                @foreach (string line in item.TextLines)
+                @{
+                    RenderChordsColumn(part.FirstBarChords);
+                }
+            </td>
+            <td>
+                @{
+                    RenderChordsColumn(part.SecondBarChords);
+                }
+            </td>
+            <td class="rythm">
+                @{
+                    RenderRythmColumn(part.FirstBarRythms);
+                }
+            </td>
+            <td class="rythm">
+                @{
+                    RenderRythmColumn(part.SecondBarRythms);
+                }
+            </td>
+        }
+    }
+
+    void RenderPart(PartViewModel part)
+    {
+        <tr>
+            <td class="part">@part.Part.Name</td>
+            @{
+                RenderMusic(part);
+            }
+            <td>
+                @foreach (string line in part.TextLines)
                 {
                     @line<br />
                 }
             </td>
-        </tr>;
+        </tr>
+    }
 
     <a href="/" class="control">Все песни</a>
     <h1 class="name">@Model.Song.Name</h1>
@@ -159,7 +170,7 @@
                                                             .Where(c => !c.IsSimple))
             {
                 <tr>
-                    <td class="chord">@chordViewModel.ToString()</td>
+                    <td class="chord">@chordViewModel</td>
                     <td class="fingering">@chordViewModel.Fingering</td>
                 </tr>
             }
@@ -168,7 +179,7 @@
     <table class="fixedSize">
         @foreach (PartViewModel part in Model.Parts)
         {
-            @renderPart(part)
+            RenderPart(part);
         }
     </table>
     if (Model.Song.Music is not null)
