@@ -8,7 +8,7 @@ namespace SongBook.Web.Controllers;
 public sealed class HomeController : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index([FromServices]Manager manager, bool? roll)
+    public async Task<IActionResult> Index([FromServices] Manager manager, bool? roll)
     {
         await manager.LoadIndexAsync();
         if (roll.HasValue && roll.Value)
@@ -21,7 +21,7 @@ public sealed class HomeController : Controller
 
     [HttpGet]
     [Route("roll")]
-    public async Task<IActionResult> Roll([FromServices]Manager manager)
+    public async Task<IActionResult> Roll([FromServices] Manager manager)
     {
         await manager.LoadIndexAsync();
         manager.Roll();
@@ -30,7 +30,8 @@ public sealed class HomeController : Controller
 
     [HttpGet]
     [Route("song")]
-    public async Task<IActionResult> SongView(byte id, sbyte? delta, bool? showRepeats, bool? autotune, [FromServices]Manager manager)
+    public async Task<IActionResult> SongView(byte id, sbyte? delta, bool? showRepeats, bool? autotune,
+        [FromServices] Manager manager)
     {
         Song song = manager.Songs[id];
         if (autotune == true)
