@@ -1,126 +1,144 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using GoogleSheetsManager;
 using GoogleSheetsManager.Providers;
+using JetBrains.Annotations;
 
-namespace SongBook.Web.Models
+// ReSharper disable NullableWarningSuppressionIsUsed
+
+namespace SongBook.Web.Models;
+
+public sealed class Song
 {
-    public sealed class Song : ILoadable
+    [Required]
+    [UsedImplicitly]
+    [SheetField("Готова")]
+    public bool Ready { get; internal set; }
+
+    [Required]
+    [UsedImplicitly]
+    [SheetField("Выучена")]
+    public bool Learned { get; internal set; }
+
+    [Required]
+    [UsedImplicitly]
+    [SheetField("Название")]
+    public string Name { get; internal set; } = null!;
+
+    [Required]
+    [UsedImplicitly]
+    [SheetField("Автор")]
+    public string Author { get; internal set; } = null!;
+
+    [UsedImplicitly]
+    [SheetField("Каподастр")]
+    public byte? DefaultCapo
     {
-        public bool Ready { get; private set; }
-        public bool Learned { get; private set; }
-        public string Name { get; private set; }
-        public string Author { get; private set; }
-        public Uri Music { get; private set; }
-        public List<Uri> Tutorials { get; private set; }
-
-        internal Tune DefaultTune { get; private set; }
-        public Tune CurrentTune { get; private set; }
-
-        internal IReadOnlyList<Part> Parts;
-
-        public void Load(IDictionary<string, object> valueSet)
+        set
         {
-            Ready = valueSet[ReadyTitle]?.ToBool() ?? false;
-            Learned = valueSet[LearnedTitle]?.ToBool() ?? false;
-            Name = valueSet[NameTitle]?.ToString();
-            Author = valueSet[AuthorTitle]?.ToString();
-            Music = valueSet[MusicTitle]?.ToUri();
-            Tutorials = valueSet[TutorialsTitle]?.ToUris();
-
-            var defaultCapo = new Tune(valueSet[DefaultCapoTitle]?.ToByte() ?? 0);
+            Tune defaultCapo = new(value ?? 0);
             DefaultTune = defaultCapo.Invert();
-            CurrentTune = new Tune(0);
         }
-
-        internal async Task LoadAsync(SheetsProvider provider, string sheetPostfix, Dictionary<string, Chord> chords)
-        {
-            _chords = chords;
-
-            IList<HalfBarData> halfBars =
-                await DataManager.GetValuesAsync<HalfBarData>(provider, $"{Name}{sheetPostfix}", true);
-            var parts = new List<Part>();
-            Part currentPart = null;
-            foreach (HalfBarData halfBarData in halfBars)
-            {
-                halfBarData.InitMusic(_chords);
-                if (string.IsNullOrWhiteSpace(halfBarData.Part))
-                {
-                    if (currentPart == null)
-                    {
-                        throw new NullReferenceException("Empty part!");
-                    }
-                    currentPart.HalfBars.Add(halfBarData);
-                }
-                else
-                {
-                    if (currentPart != null)
-                    {
-                        parts.Add(currentPart);
-                    }
-                    currentPart = new Part(halfBarData);
-                }
-            }
-            if (currentPart != null)
-            {
-                parts.Add(currentPart);
-            }
-            Parts = parts;
-        }
-
-        internal void TransposeTo(Tune tune) => TransposeBy(tune - CurrentTune);
-
-        internal void TransposeBy(sbyte delta)
-        {
-            if (delta == 0)
-            {
-                return;
-            }
-
-            CurrentTune += delta;
-            foreach (HalfBarData halfBarData in Parts.SelectMany(p => p.HalfBars).Where(h => h.Chord != null))
-            {
-                string chordKey = halfBarData.Chord.TransposeBy(delta);
-                halfBarData.SetChord(chordKey, _chords);
-            }
-        }
-
-        internal Tune GetEasiestTune()
-        {
-            Tune current = CurrentTune;
-
-            Tune? best = null;
-            uint? minBarres = null;
-            for (byte value = 0; value < Tune.Limit; ++value)
-            {
-                var tune = new Tune(value);
-                TransposeTo(tune);
-                uint barres = CountBarres();
-                if (!minBarres.HasValue || (barres < minBarres))
-                {
-                    minBarres = barres;
-                    best = tune;
-                }
-            }
-
-            TransposeTo(current);
-
-            // ReSharper disable once PossibleInvalidOperationException
-            return best.Value;
-        }
-
-        internal uint CountBarres() => (uint)Parts.SelectMany(p => p.HalfBars).Count(h => h.HasBarre());
-
-        private const string ReadyTitle = "Готова";
-        private const string LearnedTitle = "Выучена";
-        private const string NameTitle = "Название";
-        private const string AuthorTitle = "Автор";
-        private const string DefaultCapoTitle = "Каподастр";
-        private const string MusicTitle = "Музыка";
-        private const string TutorialsTitle = "Разбор";
-
-        private Dictionary<string, Chord> _chords;
     }
+
+    [UsedImplicitly]
+    [SheetField("Музыка")]
+    public Uri? Music { get; internal set; }
+
+    [UsedImplicitly]
+    [SheetField("Разбор")]
+    public List<Uri>? Tutorials { get; internal set; }
+
+    internal Tune DefaultTune { get; private set; }
+
+    internal Tune CurrentTune { get; private set; } = new(0);
+
+    internal IReadOnlyList<Part> Parts = new List<Part>();
+
+    internal async Task LoadAsync(SheetsProvider provider, string sheetPostfix, Dictionary<string, Chord> chords)
+    {
+        _chords = chords;
+
+        SheetData<HalfBarData> halfBars = await DataManager<HalfBarData>.LoadAsync(provider, $"{Name}{sheetPostfix}",
+            formula: true, additionalConverters: AdditionalConverters);
+        List<Part> parts = new();
+        Part? currentPart = null;
+        foreach (HalfBarData halfBarData in halfBars.Instances)
+        {
+            halfBarData.InitMusic(_chords);
+            if (string.IsNullOrWhiteSpace(halfBarData.Part))
+            {
+                if (currentPart is null)
+                {
+                    throw new NullReferenceException("Empty part!");
+                }
+                currentPart.HalfBars.Add(halfBarData);
+            }
+            else
+            {
+                if (currentPart is not null)
+                {
+                    parts.Add(currentPart);
+                }
+                currentPart = new Part(halfBarData);
+            }
+        }
+        if (currentPart is not null)
+        {
+            parts.Add(currentPart);
+        }
+        Parts = parts;
+    }
+
+    internal void TransposeTo(Tune tune) => TransposeBy(tune - CurrentTune);
+
+    internal void TransposeBy(sbyte delta)
+    {
+        if (delta == 0)
+        {
+            return;
+        }
+
+        CurrentTune += delta;
+        foreach (HalfBarData halfBarData in Parts.SelectMany(p => p.HalfBars).Where(h => h.Chord is not null))
+        {
+            string chordKey = halfBarData.Chord!.TransposeBy(delta);
+            halfBarData.SetChord(chordKey, _chords);
+        }
+    }
+
+    internal Tune GetEasiestTune()
+    {
+        Tune current = CurrentTune;
+
+        Tune? best = null;
+        uint? minBarres = null;
+        for (byte value = 0; value < Tune.Limit; ++value)
+        {
+            Tune tune = new(value);
+            TransposeTo(tune);
+            uint barres = CountBarres();
+            if (!minBarres.HasValue || (barres < minBarres))
+            {
+                minBarres = barres;
+                best = tune;
+            }
+        }
+
+        TransposeTo(current);
+
+        return best!.Value;
+    }
+
+    internal uint CountBarres() => (uint) Parts.SelectMany(p => p.HalfBars).Count(h => h.HasBarre());
+
+    private Dictionary<string, Chord> _chords = new();
+
+    private static readonly Dictionary<Type, Func<object?, object?>> AdditionalConverters = new()
+    {
+        { typeof(Uri), Utils.ToUri },
+    };
 }

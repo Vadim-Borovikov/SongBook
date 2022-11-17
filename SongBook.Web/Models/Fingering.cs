@@ -1,29 +1,29 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
-namespace SongBook.Web.Models
+namespace SongBook.Web.Models;
+
+public sealed class Fingering
 {
-    public sealed class Fingering
+    internal Fingering(string? fingering = null) => _parts = fingering?.Split(' ') ?? Array.Empty<string>();
+
+    public override string ToString() => string.Join(' ', _parts);
+
+    internal bool IsPresent => _parts.Length > 0;
+
+    internal bool HasBarre()
     {
-        internal Fingering(string fingering) => _parts = fingering?.Split(' ') ?? new string[0];
-
-        public override string ToString() => string.Join(' ', _parts);
-
-        internal bool IsPresent => _parts.Length > 0;
-
-        internal bool HasBarre()
+        bool hasFret = false;
+        foreach (string part in _parts)
         {
-            bool hasFret = false;
-            foreach (string part in _parts)
+            if (part == "O")
             {
-                if (part == "O")
-                {
-                    return false;
-                }
-                hasFret |= part.Any(char.IsDigit);
+                return false;
             }
-            return hasFret;
+            hasFret |= part.Any(char.IsDigit);
         }
-
-        private readonly string[] _parts;
+        return hasFret;
     }
+
+    private readonly string[] _parts;
 }

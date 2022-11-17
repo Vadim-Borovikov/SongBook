@@ -1,33 +1,66 @@
 ﻿using System;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using SongBook.Web.Models;
 
-namespace SongBook.Web
+namespace SongBook.Web;
+
+internal static class Program
 {
-    internal static class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        Utils.LogManager.DeleteExceptionLog();
+        try
         {
-            try
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+            Config? config = Configure(builder);
+            if (config is null)
             {
-                CreateWebHostBuilder(args).Build().Run();
+                throw new NullReferenceException("Can't load config.");
             }
-            catch (Exception ex)
+            Utils.StartLogWith(config.SystemTimeZoneIdLogs);
+
+            IServiceCollection services = builder.Services;
+            services.AddControllersWithViews().AddNewtonsoftJson();
+
+            services.AddSingleton<Manager>();
+
+            WebApplication app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
             {
-                Utils.LogException(ex);
+                app.UseDeveloperExceptionPage();
             }
+
+            app.UseRouting();
+            app.UseCors();
+
+            app.MapControllers();
+
+            app.Run();
+        }
+        catch (Exception ex)
+        {
+            Utils.LogManager.LogException(ex);
+        }
+    }
+
+    private static Config? Configure(WebApplicationBuilder builder)
+    {
+        ConfigurationManager configuration = builder.Configuration;
+        Config? config = configuration.Get<Config>();
+        if (config is null)
+        {
+            return null;
         }
 
-        private static IWebHostBuilder CreateWebHostBuilder(string[] args)
-        {
-            return WebHost.CreateDefaultBuilder(args)
-                          .ConfigureLogging((ctx, builder) =>
-                          {
-                              builder.AddConfiguration(ctx.Configuration.GetSection("Logging"));
-                              builder.AddFile(o => o.RootPath = ctx.HostingEnvironment.ContentRootPath);
-                          })
-                          .UseStartup<Startup>();
-        }
+        builder.Services.AddOptions<Config>().Bind(configuration).ValidateDataAnnotations();
+        builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<Config>>().Value);
+
+        return config;
     }
 }

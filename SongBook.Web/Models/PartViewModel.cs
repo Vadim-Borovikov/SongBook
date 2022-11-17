@@ -1,92 +1,90 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.Internal;
 
-namespace SongBook.Web.Models
+namespace SongBook.Web.Models;
+
+public sealed class PartViewModel
 {
-    public sealed class PartViewModel
+    internal PartViewModel(Part part, bool isRepeat, bool wasProviousCutted)
     {
-        internal PartViewModel(Part part, bool isRepeat, bool wasProviousCutted)
+        Part = part;
+        IsRepeat = isRepeat;
+
+        Tabs = new List<Uri>();
+        FirstBarChords = new List<IList<ChordViewModel>>();
+        SecondBarChords = new List<IList<ChordViewModel>>();
+        FirstBarRythms = new List<string>();
+        SecondBarRythms = new List<string>();
+        TextLines = new List<string>();
+
+        bool isCutted = false;
+        for (int i = 0; i < Part.HalfBars.Count; i += LineSize)
         {
-            Part = part;
-            IsRepeat = isRepeat;
+            List<HalfBarData> line = Part.HalfBars.Skip(i).Take(LineSize).ToList();
 
-            Tabs = new List<Uri>();
-            FirstBarChords = new List<IList<ChordViewModel>>();
-            SecondBarChords = new List<IList<ChordViewModel>>();
-            FirstBarRythms = new List<string>();
-            SecondBarRythms = new List<string>();
-            TextLines = new List<string>();
-
-            bool isCutted = false;
-            for (int i = 0; i < Part.HalfBars.Count; i += LineSize)
+            Uri? tab = line[0].Tab;
+            if (tab is null)
             {
-                List<HalfBarData> line = Part.HalfBars.Skip(i).Take(LineSize).ToList();
+                List<ChordViewModel> chords =
+                    line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
+                FirstBarChords.Add(GetChords(chords.Take(2).ToList()));
+                SecondBarChords.Add(GetChords(chords.Skip(2).ToList()));
+            }
+            else
+            {
+                Tabs.Add(tab);
+            }
 
-                Uri tab = line[0].Tab;
-                if (tab == null)
+            List<string?> rythms = line.Select(l => l.Rythm).ToList();
+            FirstBarRythms.Add(string.Join("", rythms.Take(2)));
+            SecondBarRythms.Add(string.Join("", rythms.Skip(2)));
+
+            string words = string.Join("", line.Select(l => l.Text));
+            isCutted = false;
+            if (!string.IsNullOrWhiteSpace(words))
+            {
+                isCutted = !words.EndsWith(' ');
+                if (isCutted && !words.EndsWith('-'))
                 {
-                    List<ChordViewModel> chords =
-                        line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
-                    FirstBarChords.Add(GetChords(chords.Take(2).ToList()));
-                    SecondBarChords.Add(GetChords(chords.Skip(2).ToList()));
+                    words = $"{words}-";
+                }
+
+                if (wasProviousCutted)
+                {
+                    words = $"-{words}";
                 }
                 else
                 {
-                    Tabs.Add(tab);
+                    words = char.ToUpper(words[0]) + words[1..];
                 }
-
-                List<string> rythms = line.Select(l => l.Rythm).ToList();
-                FirstBarRythms.Add(rythms.Take(2).Join(""));
-                SecondBarRythms.Add(rythms.Skip(2).Join(""));
-
-                string words = line.Select(l => l.Text).Join("");
-                isCutted = false;
-                if (!string.IsNullOrWhiteSpace(words))
-                {
-                    isCutted = !words.EndsWith(' ');
-                    if (isCutted && !words.EndsWith('-'))
-                    {
-                        words = $"{words}-";
-                    }
-
-                    if (wasProviousCutted)
-                    {
-                        words = $"-{words}";
-                    }
-                    else
-                    {
-                        words = char.ToUpper(words[0]) + words.Substring(1);
-                    }
-                }
-                TextLines.Add(words);
-                wasProviousCutted = isCutted;
             }
-            IsCutted = isCutted;
+            TextLines.Add(words);
+            wasProviousCutted = isCutted;
         }
-
-        private static IList<ChordViewModel> GetChords(IList<ChordViewModel> chords)
-        {
-            if ((chords.Count == 2) && Equals(chords[0], chords[1]))
-            {
-                return new[] { chords[0] };
-            }
-
-            return chords;
-        }
-
-        public readonly Part Part;
-        public readonly IList<IList<ChordViewModel>> FirstBarChords;
-        public readonly IList<IList<ChordViewModel>> SecondBarChords;
-        public readonly IList<Uri> Tabs;
-        public readonly IList<string> FirstBarRythms;
-        public readonly IList<string> SecondBarRythms;
-        public readonly IList<string> TextLines;
-        public readonly bool IsRepeat;
-
-        internal readonly bool IsCutted;
-
-        private const int LineSize = 4;
+        IsCutted = isCutted;
     }
+
+    private static IList<ChordViewModel> GetChords(IList<ChordViewModel> chords)
+    {
+        if ((chords.Count == 2) && Equals(chords[0], chords[1]))
+        {
+            return new[] { chords[0] };
+        }
+
+        return chords;
+    }
+
+    public readonly Part Part;
+    public readonly IList<IList<ChordViewModel>> FirstBarChords;
+    public readonly IList<IList<ChordViewModel>> SecondBarChords;
+    public readonly IList<Uri> Tabs;
+    public readonly IList<string> FirstBarRythms;
+    public readonly IList<string> SecondBarRythms;
+    public readonly IList<string> TextLines;
+    public readonly bool IsRepeat;
+
+    internal readonly bool IsCutted;
+
+    private const int LineSize = 4;
 }

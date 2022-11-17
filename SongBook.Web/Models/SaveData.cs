@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace SongBook.Web.Models
+namespace SongBook.Web.Models;
+
+public sealed class SaveData
 {
-    public sealed class SaveData
-    {
-        [JsonProperty]
-        public byte LastOrderedSongId { get; set; }
-        [JsonProperty]
-        public byte RandomSongId { get; set; }
+    [JsonProperty]
+    public byte LastOrderedSongId { get; set; }
+    [JsonProperty]
+    public byte RandomSongId { get; set; }
 
-        [JsonProperty]
-        public HashSet<byte> AlsoPlayedYesterday { get; set; }
+    [JsonProperty]
+    public HashSet<byte> AlsoPlayedYesterday { get; set; }
 
-        public SaveData() => AlsoPlayedYesterday = new HashSet<byte>();
-    }
+    public SaveData() => AlsoPlayedYesterday = new HashSet<byte>();
 }

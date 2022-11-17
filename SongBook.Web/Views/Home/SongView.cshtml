@@ -1,4 +1,5 @@
-﻿@model SongViewModel
+﻿@using SongBook.Web.Models
+@model SongBook.Web.Models.SongViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -121,7 +122,7 @@
     <h1 class="name">@Model.Song.Name</h1>
     <h3 class="author">@Model.Song.Author</h3>
 
-    if (Model.Parts.Any(p => p.Part.HalfBars.Any(hb => hb.Chord != null)))
+    if (Model.Parts.Any(p => p.Part.HalfBars.Any(hb => hb.Chord is not null)))
     {
         <table class="control">
             <tr>
@@ -146,7 +147,7 @@
         <table>
             @foreach (ChordViewModel chordViewModel in Model.Parts
                                                             .SelectMany(p => p.Part.HalfBars)
-                                                            .Where(hb => hb.Chord != null)
+                                                            .Where(hb => hb.Chord is not null)
                                                             .Select(hb => new ChordViewModel(hb.Chord, hb.ChordOption))
                                                             .Distinct()
                                                             .Where(c => !c.IsSimple))
@@ -164,11 +165,11 @@
             @renderPart(part)
         }
     </table>
-    if (Model.Song.Music != null)
+    if (Model.Song.Music is not null)
     {
         <iframe width="100%" height="100" src="@Model.Song.Music" frameborder="0"></iframe>
     }
-    if (Model.Song.Tutorials != null)
+    if (Model.Song.Tutorials is not null)
     {
         foreach (Uri tutorial in Model.Song.Tutorials)
         {

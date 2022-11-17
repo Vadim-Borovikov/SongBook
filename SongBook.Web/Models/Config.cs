@@ -1,32 +1,43 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+using JetBrains.Annotations;
 
-namespace SongBook.Web.Models
+// ReSharper disable NullableWarningSuppressionIsUsed
+
+namespace SongBook.Web.Models;
+
+[PublicAPI]
+public sealed class Config
 {
-    public sealed class Config
-    {
-        [JsonProperty]
-        public string ApplicationName { get; set; }
+    [Required]
+    [MinLength(1)]
+    public string ApplicationName { get; init; } = null!;
 
-        [JsonProperty]
-        public string GoogleSheetId { get; set; }
+    [Required]
+    [MinLength(1)]
+    public string GoogleSheetId { get; init; } = null!;
 
-        [JsonProperty]
-        public string GoogleRangeIndex { get; set; }
+    [Required]
+    [MinLength(1)]
+    public string GoogleRangeIndex { get; init; } = null!;
 
-        [JsonProperty]
-        public string GoogleRangeChords { get; set; }
+    [Required]
+    [MinLength(1)]
+    public string GoogleRangeChords { get; init; } = null!;
 
-        [JsonProperty]
-        public string GoogleRangePostfix { get; set; }
+    [Required]
+    [MinLength(1)]
+    public string GoogleRangePostfix { get; init; } = null!;
 
-        [JsonProperty]
-        public Dictionary<string, string> GoogleCredential { get; set; }
+    public Dictionary<string, string>? GoogleCredential { get; init; }
 
-        [JsonProperty]
-        public string GoogleCredentialJson { get; set; }
+    public string? GoogleCredentialJson { get; init; }
 
-        [JsonProperty]
-        public string SavePath { get; set; }
-    }
+    [Required]
+    [MinLength(1)]
+    public string SavePath { get; init; } = null!;
+
+    [Required]
+    [MinLength(1)]
+    public string SystemTimeZoneIdLogs { get; init; } = null!;
 }

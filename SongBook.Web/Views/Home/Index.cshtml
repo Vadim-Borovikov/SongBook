@@ -1,4 +1,5 @@
-﻿@model SongsViewModel
+﻿@using SongBook.Web.Models
+@model SongBook.Web.Models.SongsViewModel
 
 <style>
     a:link {
@@ -39,7 +40,7 @@
             </td>
             <td>
                 @{
-                    string songClass = song.Learned ? "learned" : (song.Ready ? "ready" : "inProgress");
+                    string songClass = song.Learned ? "learned" : song.Ready ? "ready" : "inProgress";
                 }
                 <a href="/song?id=@i" class=@songClass>@song.Author — @song.Name</a>
             </td>
