@@ -33,6 +33,12 @@
         .tab:hover {
             height: 100%
         }
+        iframe {
+            border: 0
+        }
+        .music {
+            width: 100%
+        }
     </style>
 
     Func<ChordViewModel, object> renderChord = @<a title="@item.Fingering" class="chord">@item.ToString()</a>;
@@ -127,7 +133,7 @@
         <table class="control">
             <tr>
                 <td>
-                    Capo: <a href="/song?id=@Model.Id&delta=1&showRepeats=@Model.ShowRepeats" class="btn btn-default">–</a> @Model.GetCurrentCapo() <a href="/song?id=@Model.Id&delta=-1&showRepeats=@Model.ShowRepeats" class="btn btn-default">+</a> баррэ: @Model.GetCurrentBarresPercent().ToString("P0") <a href="/song?id=@Model.Id&autotune=true&showRepeats=@Model.ShowRepeats" class="btn btn-default">😌</a>
+                    Capo: <a href="/song?id=@Model.Id&delta=1&showRepeats=@Model.ShowRepeats">–</a> @Model.GetCurrentCapo() <a href="/song?id=@Model.Id&delta=-1&showRepeats=@Model.ShowRepeats">+</a> баррэ: @Model.GetCurrentBarresPercent().ToString("P0") <a href="/song?id=@Model.Id&autotune=true&showRepeats=@Model.ShowRepeats">😌</a>
                 </td>
                 <td>
                     Повторы: 
@@ -167,13 +173,13 @@
     </table>
     if (Model.Song.Music is not null)
     {
-        <iframe width="100%" height="100" src="@Model.Song.Music" frameborder="0"></iframe>
+        <iframe height="100" src="@Model.Song.Music" class="music"></iframe>
     }
     if (Model.Song.Tutorials is not null)
     {
         foreach (Uri tutorial in Model.Song.Tutorials)
         {
-            <iframe width="560" height="315" src="@tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="560" height="315" src="@tutorial" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         }
     }
 }
