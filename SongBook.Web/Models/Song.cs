@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 
 namespace SongBook.Web.Models;
 
-public sealed class Song
+internal sealed class Song
 {
     [Required]
     [UsedImplicitly]
@@ -52,13 +52,13 @@ public sealed class Song
     [SheetField("Разбор")]
     public List<Uri>? Tutorials { get; internal set; }
 
-    internal Tune DefaultTune { get; private set; }
+    public Tune DefaultTune { get; private set; }
 
-    internal Tune CurrentTune { get; private set; } = new(0);
+    public Tune CurrentTune { get; private set; } = new(0);
 
-    internal IReadOnlyList<Part> Parts = new List<Part>();
+    public IReadOnlyList<Part> Parts = new List<Part>();
 
-    internal async Task LoadAsync(SheetsProvider provider, string sheetPostfix, Dictionary<string, Chord> chords)
+    public async Task LoadAsync(SheetsProvider provider, string sheetPostfix, Dictionary<string, Chord> chords)
     {
         _chords = chords;
 
@@ -93,9 +93,9 @@ public sealed class Song
         Parts = parts;
     }
 
-    internal void TransposeTo(Tune tune) => TransposeBy(tune - CurrentTune);
+    public void TransposeTo(Tune tune) => TransposeBy(tune - CurrentTune);
 
-    internal void TransposeBy(sbyte delta)
+    public void TransposeBy(sbyte delta)
     {
         if (delta == 0)
         {
@@ -110,7 +110,7 @@ public sealed class Song
         }
     }
 
-    internal Tune GetEasiestTune()
+    public Tune GetEasiestTune()
     {
         Tune current = CurrentTune;
 
@@ -133,7 +133,7 @@ public sealed class Song
         return best!.Value;
     }
 
-    internal uint CountBarres() => (uint) Parts.SelectMany(p => p.HalfBars).Count(h => h.HasBarre());
+    public uint CountBarres() => (uint) Parts.SelectMany(p => p.HalfBars).Count(h => h.HasBarre());
 
     private Dictionary<string, Chord> _chords = new();
 

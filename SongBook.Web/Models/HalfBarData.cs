@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace SongBook.Web.Models;
 
-public sealed class HalfBarData
+internal sealed class HalfBarData
 {
     [UsedImplicitly]
     [SheetField("Часть")]
@@ -32,20 +32,20 @@ public sealed class HalfBarData
     [SheetField("Текст")]
     public string? Text;
 
-    internal Uri? Tab { get; private set; }
+    public Uri? Tab { get; private set; }
 
     public Chord? Chord { get; private set; }
     public int ChordOption { get; private set; }
 
-    internal bool HasBarre() => Chord is not null && Chord.Fingerings[ChordOption].HasBarre();
+    public bool HasBarre() => Chord is not null && Chord.Fingerings[ChordOption].HasBarre();
 
-    internal void SetChord(string chordKey, Dictionary<string, Chord> chords)
+    public void SetChord(string chordKey, Dictionary<string, Chord> chords)
     {
         Music = chordKey;
         InitMusic(chords);
     }
 
-    internal void InitMusic(Dictionary<string, Chord> chords)
+    public void InitMusic(Dictionary<string, Chord> chords)
     {
         if (string.IsNullOrWhiteSpace(Music))
         {

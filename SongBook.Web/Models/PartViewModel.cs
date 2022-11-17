@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace SongBook.Web.Models;
 
-public sealed class PartViewModel
+internal sealed class PartViewModel
 {
-    internal PartViewModel(Part part, bool isRepeat, bool wasProviousCutted)
+    public PartViewModel(Part part, bool isRepeat, bool wasProviousCutted)
     {
         Part = part;
         IsRepeat = isRepeat;
@@ -83,8 +83,7 @@ public sealed class PartViewModel
     public readonly IList<string> SecondBarRythms;
     public readonly IList<string> TextLines;
     public readonly bool IsRepeat;
-
-    internal readonly bool IsCutted;
+    public readonly bool IsCutted;
 
     private const int LineSize = 4;
 }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SongBook.Web.Models;
 
-public sealed class SaveData
+internal sealed class SaveData
 {
     [JsonProperty]
     public byte LastOrderedSongId { get; set; }

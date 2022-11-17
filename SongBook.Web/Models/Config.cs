@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using JetBrains.Annotations;
 
 // ReSharper disable NullableWarningSuppressionIsUsed
 
 namespace SongBook.Web.Models;
 
-[PublicAPI]
 public sealed class Config
 {
     [Required]

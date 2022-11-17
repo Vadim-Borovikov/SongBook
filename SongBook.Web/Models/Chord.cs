@@ -9,9 +9,9 @@ using JetBrains.Annotations;
 
 namespace SongBook.Web.Models;
 
-public sealed class Chord
+internal sealed class Chord
 {
-    internal static readonly string[] Semitones =
+    public static readonly string[] Semitones =
     {
         "A",
         "A#",
@@ -67,7 +67,7 @@ public sealed class Chord
         set => Fingerings[2] = new Fingering(value);
     }
 
-    internal readonly IList<Fingering> Fingerings = new Fingering[3];
+    public readonly IList<Fingering> Fingerings = new Fingering[3];
 
     public Chord() { }
 
@@ -76,7 +76,7 @@ public sealed class Chord
         return Bass == Semitone ? $"{Semitone}{Postfix}" : $"{Semitone}{Postfix}/{Bass}";
     }
 
-    internal string TransposeBy(sbyte delta)
+    public string TransposeBy(sbyte delta)
     {
         string semitone = TransposeBy(Semitone, delta);
         string bass = TransposeBy(Bass, delta);

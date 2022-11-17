@@ -2,7 +2,7 @@ using System;
 
 namespace SongBook.Web.Models;
 
-public sealed class ChordViewModel : IEquatable<ChordViewModel>
+internal sealed class ChordViewModel : IEquatable<ChordViewModel>
 {
     public Fingering? Fingering => _chord?.Fingerings[_option];
     public bool IsSimple => _chord is null || (_chord.IsSimple && (_option == 0));

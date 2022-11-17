@@ -5,7 +5,7 @@ namespace SongBook.Web.Models;
 
 public sealed class SongViewModel
 {
-    public SongViewModel(Song song, int id, bool? showRepeats)
+    internal SongViewModel(Song song, int id, bool? showRepeats)
     {
         Song = song;
         Id = id;
@@ -22,17 +22,17 @@ public sealed class SongViewModel
         }
     }
 
-    public byte GetCurrentCapo() => Song.CurrentTune.Invert().Value;
+    internal byte GetCurrentCapo() => Song.CurrentTune.Invert().Value;
 
-    public float GetCurrentBarresPercent()
+    internal float GetCurrentBarresPercent()
     {
         uint current = Song.CountBarres();
         int max = Song.Parts.SelectMany(p => p.HalfBars).Count();
         return current * 1.0f / max;
     }
 
-    public readonly Song Song;
-    public readonly int Id;
-    public readonly bool ShowRepeats;
-    public readonly List<PartViewModel> Parts;
+    internal readonly Song Song;
+    internal readonly int Id;
+    internal readonly bool ShowRepeats;
+    internal readonly List<PartViewModel> Parts;
 }

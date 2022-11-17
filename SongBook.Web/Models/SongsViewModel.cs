@@ -5,14 +5,14 @@ namespace SongBook.Web.Models;
 
 public sealed class SongsViewModel
 {
-    public SongsViewModel(IList<Song> songs, SaveData data)
+    internal SongsViewModel(IList<Song> songs, SaveData data)
     {
         Songs = songs;
         Data = data;
         FirstSongToLearn = songs.FirstOrDefault(s => s.Ready && !s.Learned);
     }
 
-    public readonly IList<Song> Songs;
-    public readonly SaveData Data;
-    public readonly Song? FirstSongToLearn;
+    internal readonly IList<Song> Songs;
+    internal readonly SaveData Data;
+    internal readonly Song? FirstSongToLearn;
 }
