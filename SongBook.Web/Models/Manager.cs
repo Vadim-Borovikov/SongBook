@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using GoogleSheetsManager;
 using GoogleSheetsManager.Providers;
 using GryphonUtilities;
-using Newtonsoft.Json;
 
 namespace SongBook.Web.Models;
 
@@ -16,7 +16,7 @@ public sealed class Manager : IDisposable
         _config = config;
 
         string json = string.IsNullOrWhiteSpace(_config.GoogleCredentialJson)
-            ? JsonConvert.SerializeObject(_config.GoogleCredential)
+            ? JsonSerializer.Serialize(_config.GoogleCredential)
             : _config.GoogleCredentialJson;
         _googleSheetProvider = new SheetsProvider(json, _config.ApplicationName, _config.GoogleSheetId);
         _saveManager = new SaveManager<SaveData>(_config.SavePath);
