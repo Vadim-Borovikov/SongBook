@@ -22,7 +22,7 @@ internal static class Program
             {
                 throw new NullReferenceException("Can't load config.");
             }
-            Utils.StartLogWith(config.SystemTimeZoneIdLogs);
+            Utils.StartLogWith(config.TimeZoneIdLogs);
 
             IServiceCollection services = builder.Services;
             services.AddControllersWithViews().AddNewtonsoftJson();

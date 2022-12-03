@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using GoogleSheetsManager;
 using GoogleSheetsManager.Providers;
@@ -14,11 +13,7 @@ public sealed class Manager : IDisposable
     public Manager(Config config)
     {
         _config = config;
-
-        string json = string.IsNullOrWhiteSpace(_config.GoogleCredentialJson)
-            ? JsonSerializer.Serialize(_config.GoogleCredential)
-            : _config.GoogleCredentialJson;
-        _googleSheetProvider = new SheetsProvider(json, _config.ApplicationName, _config.GoogleSheetId);
+        _googleSheetProvider = new SheetsProvider(_config, _config.GoogleSheetId);
         _saveManager = new SaveManager<SaveData>(_config.SavePath);
     }
 

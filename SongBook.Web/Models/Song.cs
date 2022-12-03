@@ -56,7 +56,7 @@ internal sealed class Song
 
     public Tune CurrentTune { get; private set; } = new(0);
 
-    public IReadOnlyList<Part> Parts = new List<Part>();
+    public IReadOnlyList<Part> Parts = Array.Empty<Part>();
 
     public async Task LoadAsync(SheetsProvider provider, string sheetPostfix, Dictionary<string, Chord> chords)
     {

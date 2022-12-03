@@ -9,5 +9,5 @@ internal sealed class Part
 
     public readonly IList<HalfBarData> HalfBars;
 
-    public Part(HalfBarData halfBar) => HalfBars = new List<HalfBarData> { halfBar };
+    public Part(HalfBarData halfBar) => HalfBars = halfBar.WrapWithList();
 }

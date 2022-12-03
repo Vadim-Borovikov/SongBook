@@ -1,3 +1,4 @@
+using GoogleSheetsManager;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -5,11 +6,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SongBook.Web.Models;
 
-public sealed class Config
+public sealed class Config : IConfigGoogleSheets
 {
+    public Dictionary<string, string>? Credential { get; init; }
+
+    public string? CredentialJson { get; init; }
+
     [Required]
     [MinLength(1)]
     public string ApplicationName { get; init; } = null!;
+
+    [Required]
+    [MinLength(1)]
+    public string TimeZoneId { get; init; } = null!;
 
     [Required]
     [MinLength(1)]
@@ -27,15 +36,11 @@ public sealed class Config
     [MinLength(1)]
     public string GoogleRangePostfix { get; init; } = null!;
 
-    public Dictionary<string, string>? GoogleCredential { get; init; }
-
-    public string? GoogleCredentialJson { get; init; }
-
     [Required]
     [MinLength(1)]
     public string SavePath { get; init; } = null!;
 
     [Required]
     [MinLength(1)]
-    public string SystemTimeZoneIdLogs { get; init; } = null!;
+    public string TimeZoneIdLogs { get; init; } = null!;
 }

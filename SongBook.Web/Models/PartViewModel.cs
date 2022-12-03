@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GryphonUtilities;
 
 namespace SongBook.Web.Models;
 
@@ -26,8 +27,7 @@ internal sealed class PartViewModel
             Uri? tab = line[0].Tab;
             if (tab is null)
             {
-                List<ChordViewModel> chords =
-                    line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
+                List<ChordViewModel> chords = line.Select(l => new ChordViewModel(l.Chord, l.ChordOption)).ToList();
                 FirstBarChords.Add(GetChords(chords.Take(2).ToList()));
                 SecondBarChords.Add(GetChords(chords.Skip(2).ToList()));
             }
@@ -69,7 +69,7 @@ internal sealed class PartViewModel
     {
         if ((chords.Count == 2) && Equals(chords[0], chords[1]))
         {
-            return new[] { chords[0] };
+            return chords[0].WrapWithList();
         }
 
         return chords;
