@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using GoogleSheetsManager;
-using GoogleSheetsManager.Providers;
+using GoogleSheetsManager.Documents;
 using JetBrains.Annotations;
 
 // ReSharper disable NullableWarningSuppressionIsUsed
@@ -58,12 +58,17 @@ internal sealed class Song
 
     public IReadOnlyList<Part> Parts = Array.Empty<Part>();
 
-    public async Task LoadAsync(SheetsProvider provider, string sheetPostfix, Dictionary<string, Chord> chords)
+    public async Task LoadAsync(Document document, string range, Dictionary<string, Chord> chords)
     {
         _chords = chords;
 
-        SheetData<HalfBarData> halfBars = await DataManager<HalfBarData>.LoadAsync(provider, $"{Name}{sheetPostfix}",
-            formula: true, additionalConverters: AdditionalConverters);
+        Dictionary<Type, Func<object?, object?>> additionalConverters = new()
+        {
+            { typeof(Uri), o => o.ToUri() },
+        };
+
+        Sheet sheet = document.GetOrAddSheet(Name, additionalConverters);
+        SheetData<HalfBarData> halfBars = await sheet.LoadAsync<HalfBarData>(range, true);
         List<Part> parts = new();
         Part? currentPart = null;
         foreach (HalfBarData halfBarData in halfBars.Instances)
@@ -136,9 +141,4 @@ internal sealed class Song
     public uint CountBarres() => (uint) Parts.SelectMany(p => p.HalfBars).Count(h => h.HasBarre());
 
     private Dictionary<string, Chord> _chords = new();
-
-    private static readonly Dictionary<Type, Func<object?, object?>> AdditionalConverters = new()
-    {
-        { typeof(Uri), Utils.ToUri },
-    };
 }

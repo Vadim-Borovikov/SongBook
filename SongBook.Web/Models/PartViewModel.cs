@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GryphonUtilities;
+using GryphonUtilities.Extensions;
 
 namespace SongBook.Web.Models;
 

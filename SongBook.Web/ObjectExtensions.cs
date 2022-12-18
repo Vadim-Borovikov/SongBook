@@ -1,23 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GryphonUtilities;
+using GryphonUtilities.Extensions;
 
 namespace SongBook.Web;
 
-internal static class Utils
+internal static class ObjectExtensions
 {
-    public static readonly LogManager LogManager = new();
-
-    public static void StartLogWith(string systemTimeZoneId)
-    {
-        LogManager.SetTimeZone(systemTimeZoneId);
-        LogManager.LogMessage();
-        LogManager.LogTimedMessage("Startup");
-    }
-
-    public static T GetRandomElement<T>(IList<T> list) => list[Random.Next(list.Count)];
-
     public static byte? ToByte(this object? o)
     {
         if (o is byte b)
@@ -45,6 +34,4 @@ internal static class Utils
         }
         return o?.ToString()?.Split("\n").Select(ToUri).RemoveNulls().ToList();
     }
-
-    private static readonly Random Random = new();
 }

@@ -26,6 +26,14 @@ public sealed class Config : IConfigGoogleSheets
 
     [Required]
     [MinLength(1)]
+    public string GoogleTitleIndex { get; init; } = null!;
+
+    [Required]
+    [MinLength(1)]
+    public string GoogleTitleChords { get; init; } = null!;
+
+    [Required]
+    [MinLength(1)]
     public string GoogleRangeIndex { get; init; } = null!;
 
     [Required]
@@ -34,7 +42,7 @@ public sealed class Config : IConfigGoogleSheets
 
     [Required]
     [MinLength(1)]
-    public string GoogleRangePostfix { get; init; } = null!;
+    public string GoogleRangeSong { get; init; } = null!;
 
     [Required]
     [MinLength(1)]

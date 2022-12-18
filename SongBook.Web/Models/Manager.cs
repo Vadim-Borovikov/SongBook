@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GoogleSheetsManager;
-using GoogleSheetsManager.Providers;
+using GoogleSheetsManager.Documents;
 using GryphonUtilities;
 
 namespace SongBook.Web.Models;
@@ -13,20 +13,30 @@ public sealed class Manager : IDisposable
     public Manager(Config config)
     {
         _config = config;
-        _googleSheetProvider = new SheetsProvider(_config, _config.GoogleSheetId);
+        _documentsManager = new DocumentsManager(_config);
+        _document = _documentsManager.GetOrAdd(_config.GoogleSheetId);
         _saveManager = new SaveManager<SaveData>(_config.SavePath);
     }
 
-    public void Dispose() => _googleSheetProvider.Dispose();
+    private readonly Document _document;
+
+    public void Dispose() => _documentsManager.Dispose();
 
     internal async Task LoadIndexAsync()
     {
-        SheetData<Chord> chords = await DataManager<Chord>.LoadAsync(_googleSheetProvider, _config.GoogleRangeChords,
-            additionalConverters: AdditionalConverters);
+        Dictionary<Type, Func<object?, object?>> additionalConverters = new()
+        {
+            { typeof(Uri), o => o.ToUri() },
+            { typeof(List<Uri>), o => o.ToUris() }
+        };
+        additionalConverters[typeof(byte)] = additionalConverters[typeof(byte?)] = o => o.ToByte();
+
+        Sheet chordsSheet = _document.GetOrAddSheet(_config.GoogleTitleChords, additionalConverters);
+        SheetData<Chord> chords = await chordsSheet.LoadAsync<Chord>(_config.GoogleRangeChords);
         _chords = chords.Instances.ToDictionary(c => c.ToString(), c => c);
 
-        SheetData<Song> songs = await DataManager<Song>.LoadAsync(_googleSheetProvider, _config.GoogleRangeIndex,
-            additionalConverters: AdditionalConverters);
+        Sheet indexSheet = _document.GetOrAddSheet(_config.GoogleTitleIndex, additionalConverters);
+        SheetData<Song> songs = await indexSheet.LoadAsync<Song>(_config.GoogleRangeIndex);
         Songs = songs.Instances;
         _saveManager.Load();
     }
@@ -92,13 +102,10 @@ public sealed class Manager : IDisposable
                                      .Select(i => (byte)i)
                                      .Except(excluded)
                                      .ToList();
-        return Utils.GetRandomElement(songs);
+        return _picker.GetRandomElement(songs);
     }
 
-    internal Task LoadSongAsync(Song song)
-    {
-        return song.LoadAsync(_googleSheetProvider, _config.GoogleRangePostfix, _chords);
-    }
+    internal Task LoadSongAsync(Song song) => song.LoadAsync(_document, _config.GoogleRangeSong, _chords);
 
     internal IList<Song> Songs = new List<Song>();
     internal SaveData SaveData => _saveManager.Data;
@@ -106,14 +113,7 @@ public sealed class Manager : IDisposable
     private Dictionary<string, Chord> _chords = new();
 
     private readonly Config _config;
-    private readonly SheetsProvider _googleSheetProvider;
+    private readonly DocumentsManager _documentsManager;
     private readonly SaveManager<SaveData> _saveManager;
-
-    private static readonly Dictionary<Type, Func<object?, object?>> AdditionalConverters = new()
-    {
-        { typeof(byte), o => o.ToByte() },
-        { typeof(byte?), o => o.ToByte() },
-        { typeof(Uri), Utils.ToUri },
-        { typeof(List<Uri>), Utils.ToUris }
-    };
+    private readonly RandomPicker _picker = new();
 }

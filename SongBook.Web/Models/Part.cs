@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GryphonUtilities;
+using GryphonUtilities.Extensions;
 
 namespace SongBook.Web.Models;
 
